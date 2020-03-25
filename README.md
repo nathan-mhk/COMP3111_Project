@@ -3,15 +3,15 @@
 > [https://github.com/NathanKong214/COMP3111_Project](https://github.com/NathanKong214/COMP3111_Project)
 
 # 1. Kong Ming Hin
-> Email: mhkongaa@connect.ust.hk | GitHub: NathanKong214 | Dev branch: nathan_dev
-> Task 2, 3
+> Email: mhkongaa@connect.ust.hk | GitHub: NathanKong214 | Dev branch: nathan_dev  
+> Task 2 & Task 3
 
 # 2. Pang Pak Long
 > Email: plpang@connect.ust.hk | GitHub: ethanppl | Dev branch:  
 > Task ...
 
 #  3. 
-> Email: kchoao@connect.ust.hk | GitHub: ??? | Dev branch:
+> Email: kchoao@connect.ust.hk | GitHub: ??? | Dev branch:  
 > Task ...
 
 # Useful Links
