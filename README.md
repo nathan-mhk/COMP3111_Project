@@ -7,8 +7,8 @@
 > Task 2 & Task 3
 
 # 2. Pang Pak Long
-> Email: plpang@connect.ust.hk | GitHub: ethanppl | Dev branch:  
-> Task ...
+> Email: plpang@connect.ust.hk | GitHub: ethanppl | Dev branch: ethan_dev  
+> Task 1 & Task 4
 
 #  3. 
 > Email: kchoao@connect.ust.hk | GitHub: ??? | Dev branch:  
