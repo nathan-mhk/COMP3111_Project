@@ -10,9 +10,10 @@
 > Email: plpang@connect.ust.hk | GitHub: ethanppl | Dev branch: ethan_dev  
 > Task 1 & Task 4
 
-#  3. Ho Kin Chun
-> Email: kchoao@connect.ust.hk | GitHub: kchoao | Dev branch:  kch_dev
+# 3. Ho Kin Chun
+> Email: kchoao@connect.ust.hk | GitHub: kchoao | Dev branch:  kch_dev  
 > Task 5 & Task 6
+
 
 # Useful Links
 
