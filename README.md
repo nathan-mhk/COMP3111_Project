@@ -23,10 +23,10 @@
 # [Activity 1](https://github.com/NathanKong214/COMP3111_Project/tree/master/Activity1)
 
 > [Data Model Diagram](https://github.com/NathanKong214/COMP3111_Project/tree/master/Activity1/)  
-> [System Use Case Diagram](https://github.com/NathanKong214/COMP3111_Project/tree/master/Activity1/System\ Use\ Case.xml)  
+> [System Use Case Diagram](https://github.com/NathanKong214/COMP3111_Project/tree/master/Activity1/System%20Use%20Case.xml)  
 >> [Task 1 Use Case Diagram](https://github.com/NathanKong214/COMP3111_Project/tree/master/Activity1/)  
->> [Task 2 Use Case Diagram](https://github.com/NathanKong214/COMP3111_Project/tree/master/Activity1/Task 2\ Use\ Case.xml)  
->> [Task 3 Use Case Diagram](https://github.com/NathanKong214/COMP3111_Project/tree/master/Activity1/Task 3\ Use\ Case.xml)  
+>> [Task 2 Use Case Diagram](https://github.com/NathanKong214/COMP3111_Project/tree/master/Activity1/Task%202%20Use%20Case.xml)  
+>> [Task 3 Use Case Diagram](https://github.com/NathanKong214/COMP3111_Project/tree/master/Activity1/Task%203%20Use%20Case.xml)  
 >> [Task 4 Use Case Diagram](https://github.com/NathanKong214/COMP3111_Project/tree/master/Activity1/)  
 >> [Task 5 Use Case Diagram](https://github.com/NathanKong214/COMP3111_Project/tree/master/Activity1/)  
 >> [Task 6 Use Case Diagram](https://github.com/NathanKong214/COMP3111_Project/tree/master/Activity1/)  
