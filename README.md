@@ -17,16 +17,11 @@
 
 # Useful Links
 
-> [Project Repository](https://github.com/NathanKong214/COMP3111_Project/)  
+> [Link to this repository](https://github.com/NathanKong214/COMP3111_Project/)  
 > [Project Description](https://course.cse.ust.hk/comp3111/Project/comp3111_project_s2020.pdf)  
 
 # [Activity 1](https://github.com/NathanKong214/COMP3111_Project/tree/master/Activity1)
 
 > [Data Model Diagram](https://github.com/NathanKong214/COMP3111_Project/tree/master/Activity1/)  
 > ![System Use Case Diagram](https://github.com/NathanKong214/COMP3111_Project/tree/master/Activity1/System%20Use%20Case.png)  
->> [Task 1 Use Case Specification](https://github.com/NathanKong214/COMP3111_Project/tree/master/Activity1/)  
->> [Task 2 Use Case Specification](https://github.com/NathanKong214/COMP3111_Project/tree/master/Activity1/Task%202%20Specification.docx)  
->> [Task 3 Use Case Specification](https://github.com/NathanKong214/COMP3111_Project/tree/master/Activity1/Task%203%20Specification.docx)  
->> [Task 4 Use Case Specification](https://github.com/NathanKong214/COMP3111_Project/tree/master/Activity1/)  
->> [Task 5 Use Case Specification](https://github.com/NathanKong214/COMP3111_Project/tree/master/Activity1/)  
->> [Task 6 Use Case Specification](https://github.com/NathanKong214/COMP3111_Project/tree/master/Activity1/)  
+>> [Use Case Specification](https://github.com/NathanKong214/COMP3111_Project/tree/master/Activity1/)  
