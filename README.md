@@ -23,5 +23,5 @@
 # [Activity 1](https://github.com/NathanKong214/COMP3111_Project/tree/master/Activity1)
 
 > [Data Model Diagram](https://github.com/NathanKong214/COMP3111_Project/tree/master/Activity1/)  
-> ![System Use Case Diagram](https://github.com/NathanKong214/COMP3111_Project/tree/master/Activity1/System%20Use%20Case.png)  
+> System Use Case Diagram: ![System Use Case Diagram](https://github.com/NathanKong214/COMP3111_Project/tree/master/Activity1/System%20Use%20Case.png)  
 >> [Use Case Specification](https://github.com/NathanKong214/COMP3111_Project/tree/master/Activity1/)  
