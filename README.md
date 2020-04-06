@@ -28,4 +28,4 @@ Data Model Diagram:
 
 System Use Case Diagram:  
 ![System Use Case Diagram](/Activity1/System%20Use%20Case.png)  
-&nbsp;&nbsp;&nbsp;&nbsp;[Use Case Specification](https://github.com/NathanKong214/COMP3111_Project/tree/master/Activity1/)  
+&nbsp;&nbsp;&nbsp;&nbsp;[Use Case Specification](https://github.com/NathanKong214/COMP3111_Project/tree/master/Activity1/Activity%201.pdf)  
