@@ -193,5 +193,11 @@ public class Controller {
     	// set output
     	textAreaConsole.setText(generateConsoleOutput(v));
     }
+    
+    @FXML
+    void checkFilters() {
+    	// TODO
+    	// Is it possible to use 1 function to handle multiple checkbox events?
+    }
 
 }
