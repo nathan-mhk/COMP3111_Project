@@ -84,10 +84,34 @@ public class Controller {
     void findSfqEnrollCourse() {
 
     }
+    
+    public boolean isMainURLError() {
+    	if (textfieldTerm.getText().length() != 4 || !textfieldTerm.getText().matches("^[0-9]*$") ) {
+    		textAreaConsole.setText("404 page not found: invalid term. ");
+    		return true;
+    	}
+    	
+    	if (textfieldSubject.getText().length() != 4 || !textfieldSubject.getText().matches("^[A-Z]*$") ) {
+    		textAreaConsole.setText("404 page not found: invalid subject. ");
+    		return true;
+    	}
+    	
+    	List<Course> v = scraper.scrape(textfieldURL.getText(), textfieldTerm.getText(),textfieldSubject.getText());
+    	if (v == null) {
+    		textAreaConsole.setText("404 page not found: make sure the URL, term and subject are valid. ");
+    		return true;
+    	}
+    	return false;
+    }
 
     @FXML
     void search() {
+    	if(isMainURLError()) {
+    		return;
+    	}
+    	
     	List<Course> v = scraper.scrape(textfieldURL.getText(), textfieldTerm.getText(),textfieldSubject.getText());
+    	textAreaConsole.setText("");
     	for (Course c : v) {
     		String newline = c.getTitle() + "\n";
     		for (int i = 0; i < c.getNumSlots(); i++) {

@@ -111,7 +111,6 @@ public class Scraper {
 		try {
 			
 			HtmlPage page = client.getPage(baseurl + "/" + term + "/subject/" + sub);
-
 			
 			List<?> items = (List<?>) page.getByXPath("//div[@class='course']");
 			
@@ -148,7 +147,8 @@ public class Scraper {
 			client.close();
 			return result;
 		} catch (Exception e) {
-			System.out.println(e);
+			System.out.println("404 page not found: make sure the URL, term and subject are valid. ");
+			// System.out.println(e);
 		}
 		return null;
 	}
