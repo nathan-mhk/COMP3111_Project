@@ -85,39 +85,48 @@ public class Controller {
 
     }
     
-    public boolean isMainURLError() {
+    public boolean isMainURLValid() {
+    	// 4 digits only
     	if (textfieldTerm.getText().length() != 4 || !textfieldTerm.getText().matches("^[0-9]*$") ) {
     		textAreaConsole.setText("404 page not found: invalid term. ");
-    		return true;
+    		return false;
     	}
     	
+    	// 4 UPPERCASE character only
     	if (textfieldSubject.getText().length() != 4 || !textfieldSubject.getText().matches("^[A-Z]*$") ) {
     		textAreaConsole.setText("404 page not found: invalid subject. ");
-    		return true;
+    		return false;
     	}
-    	
-    	List<Course> v = scraper.scrape(textfieldURL.getText(), textfieldTerm.getText(),textfieldSubject.getText());
-    	if (v == null) {
-    		textAreaConsole.setText("404 page not found: make sure the URL, term and subject are valid. ");
-    		return true;
-    	}
-    	return false;
+    	return true;
     }
 
     @FXML
     void search() {
-    	if(isMainURLError()) {
+    	if(!isMainURLValid()) {
     		return;
     	}
+    	// reset console text
+    	textAreaConsole.setText("");
     	
     	List<Course> v = scraper.scrape(textfieldURL.getText(), textfieldTerm.getText(),textfieldSubject.getText());
-    	textAreaConsole.setText("");
+    	
+    	// loop all courses in this list
     	for (Course c : v) {
     		String newline = c.getTitle() + "\n";
-    		for (int i = 0; i < c.getNumSlots(); i++) {
-    			Slot t = c.getSlot(i);
-    			newline += "Slot " + i + ":" + t + "\n";
+    		
+    		// loop all sections in this course
+    		for (int i = 0; i < c.getNumSections(); i++) {
+    			Section sec = c.getSection(i);
+    			newline += "\tSection: " + sec.getCode() + " (" + sec.getID() + ")\n";
+    			
+    			// loop all slots in this section
+    			for (int j = 0; j < sec.getNumSlots(); ) {
+        			Slot t = sec.getSlot(j);
+        			j += 1;
+        			newline += "\t\tSlot " + j + ": " + t + "\n";
+        		}
     		}
+    		
     		textAreaConsole.setText(textAreaConsole.getText() + "\n" + newline);
     	}
     	
