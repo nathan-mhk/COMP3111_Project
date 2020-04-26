@@ -3,7 +3,9 @@ package comp3111.coursescraper;
 // import java.awt.event.ActionEvent;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.scene.Node;
 import javafx.scene.control.Button;
+import javafx.scene.control.CheckBox;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.ProgressBar;
@@ -69,6 +71,9 @@ public class Controller {
 
     @FXML
     private TextArea textAreaConsole;
+    
+    @FXML
+    private AnchorPane anchorPaneFilter;
     
     private Scraper scraper = new Scraper();
     
@@ -195,9 +200,36 @@ public class Controller {
     }
     
     @FXML
-    void checkFilters() {
-    	// TODO
-    	// Is it possible to use 1 function to handle multiple checkbox events?
+    void checkFilters(ActionEvent event) {
+    	if (event.getSource() instanceof Button) {
+    		Button btn = (Button) event.getSource();
+    		
+    		boolean allChecked = Filter.toggleAll();
+    		String btnString;
+    		
+    		if (allChecked) {
+    			btnString = "De-select All";
+    		} else {
+    			btnString = "Select All";
+    		}
+    		btn.setText(btnString);
+    		
+    		// Check/Uncheck all boxes visually
+    		for (Node node : anchorPaneFilter.getChildren()) {
+    			if (node instanceof CheckBox) {
+    				((CheckBox) node).setSelected(allChecked);
+    			}
+    		}
+    		
+    	} else {
+    		CheckBox checkBox = (CheckBox) event.getSource();
+    		Filter.check(checkBox.getText());
+    	}
+    	
+    	/*
+    	 * TODO
+    	 * Set a list of unfiltered class in Filter
+    	 */
     }
 
 }
