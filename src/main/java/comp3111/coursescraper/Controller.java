@@ -97,6 +97,13 @@ public class Controller {
     		textAreaConsole.setText("404 page not found: invalid subject. ");
     		return false;
     	}
+    	
+    	// 404 page not found
+    	List<Course> v = scraper.scrape(textfieldURL.getText(), textfieldTerm.getText(),textfieldSubject.getText());
+    	if (v == null) {
+    		textAreaConsole.setText("404 page not found: make sure the URL, term and subject are valid. ");
+    		return false;
+    	}
     	return true;
     }
 
