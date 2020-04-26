@@ -38,13 +38,20 @@ public class SectionTest {
 	
 	@Test
 	public void testGetNumSlots() {
-		assertEquals(sec.getCode(), "L1");
+		assertEquals(sec.getNumSlots(), 3);
 	}
 	
-//	@Test
-//	public void testSetInstructor() {
-//		assertEquals(sec.getInstructor(), "ABC");
-//	}
+	@Test
+	public void testSetInstructor() {
+		assertEquals(sec.getInstructor(), "ABC");
+	}
+	
+	@Test
+	public void testClone() {
+		Section newSec = sec.clone();
+		assertEquals(newSec.getInstructor(), "ABC");
+		assertEquals(newSec.getSlot(1).getVenue(), "Rm 6591, Lift 31-32 (88)");
+	}
 	
 	@Test
 	public void testGetSlot() {
