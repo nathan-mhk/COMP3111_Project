@@ -87,7 +87,38 @@ public class Scraper {
 		client.getOptions().setJavaScriptEnabled(false);
 	}
 
-	private void addSlot(HtmlElement e, Course c, boolean secondRow) {
+	public boolean validateSection(String Code) {
+		// validate the section
+		String CodeType = Code.replaceAll("[0-9]", "");
+		if (!CodeType.contains("L") && !CodeType.contains("LA") && !CodeType.contains("T"))
+			return false;
+		else
+			return true;
+	}
+	
+	private boolean addSection(HtmlElement e, Course c) {
+		String secFullTitle = e.getChildNodes().get(1).asText();
+		String ID = secFullTitle.substring(secFullTitle.indexOf('(') + 1, secFullTitle.indexOf(')') ); // get the ID, the number inside the (bracket)
+		String Code = secFullTitle.substring(0, secFullTitle.indexOf('(') - 1); //get the code, i.e.: L1 / L2 / LA1 
+
+		// create a new section in the course if it's valid
+		if (validateSection(Code)) {
+			String instructors = e.getChildNodes().get(5).asText();
+			Section sec = new Section();
+			
+			sec.setID(Integer.parseInt(ID));
+			sec.setCode(Code);
+			sec.setInstructor(instructors);
+			
+			c.addSection(sec);
+			return true;
+		}
+		return false;
+	}
+	
+	private void addSlot(HtmlElement e, Section sec, boolean secondRow) {
+		if (sec == null)
+			return;
 		String times[] =  e.getChildNodes().get(secondRow ? 0 : 3).asText().split(" ");
 		String venue = e.getChildNodes().get(secondRow ? 1 : 4).asText();
 		if (times[0].equals("TBA"))
@@ -101,22 +132,22 @@ public class Scraper {
 			s.setStart(times[1]);
 			s.setEnd(times[3]);
 			s.setVenue(venue);
-			c.addSlot(s);	
+			sec.addSlot(s);	
 		}
 
 	}
-
+	
 	public List<Course> scrape(String baseurl, String term, String sub) {
 
 		try {
 			
 			HtmlPage page = client.getPage(baseurl + "/" + term + "/subject/" + sub);
-
 			
 			List<?> items = (List<?>) page.getByXPath("//div[@class='course']");
 			
 			Vector<Course> result = new Vector<Course>();
 
+			// Loop all course in this list
 			for (int i = 0; i < items.size(); i++) {
 				Course c = new Course();
 				HtmlElement htmlItem = (HtmlElement) items.get(i);
@@ -136,19 +167,32 @@ public class Scraper {
 				c.setExclusion((exclusion == null ? "null" : exclusion.asText()));
 				
 				List<?> sections = (List<?>) htmlItem.getByXPath(".//tr[contains(@class,'newsect')]");
+				
+				// Loop all sections in this course
 				for ( HtmlElement e: (List<HtmlElement>)sections) {
-					addSlot(e, c, false);
-					e = (HtmlElement)e.getNextSibling();
-					if (e != null && !e.getAttribute("class").contains("newsect"))
-						addSlot(e, c, true);
+					
+					// if section is invalid, no need to add slot
+					if(addSection(e, c)) {
+						addSlot(e, c.getLastSection(), false);
+						
+						// check if there is second row, i.e.: Mo 1330-1500 && Fr 0900-1030, instead of TuTh 1330-1500
+						e = (HtmlElement)e.getNextSibling();
+						if (e != null && !e.getAttribute("class").contains("newsect")) {
+							addSlot(e, c.getLastSection(), true);
+						}
+					}
 				}
 				
-				result.add(c);
+				// if this course has more than one section, add to the result
+				if(c.getNumSections() != 0) {
+					result.add(c);
+				}
 			}
 			client.close();
 			return result;
 		} catch (Exception e) {
-			System.out.println(e);
+			System.out.println("404 page not found: make sure the URL, term and subject are valid. ");
+			// System.out.println(e);
 		}
 		return null;
 	}

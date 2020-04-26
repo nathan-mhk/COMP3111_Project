@@ -84,18 +84,67 @@ public class Controller {
     void findSfqEnrollCourse() {
 
     }
+    
+    public boolean isMainURLValid() {
+    	// 4 digits only
+    	if (textfieldTerm.getText().length() != 4 || !textfieldTerm.getText().matches("^[0-9]*$") ) {
+    		textAreaConsole.setText("404 page not found: invalid term. ");
+    		return false;
+    	}
+    	
+    	// 4 UPPERCASE character only
+    	if (textfieldSubject.getText().length() != 4 || !textfieldSubject.getText().matches("^[A-Z]*$") ) {
+    		textAreaConsole.setText("404 page not found: invalid subject. ");
+    		return false;
+    	}
+    	
+    	// 404 page not found
+    	List<Course> v = scraper.scrape(textfieldURL.getText(), textfieldTerm.getText(),textfieldSubject.getText());
+    	if (v == null) {
+    		textAreaConsole.setText("404 page not found: make sure the URL, term and subject are valid. ");
+    		return false;
+    	}
+    	return true;
+    }
 
     @FXML
     void search() {
+    	if(!isMainURLValid()) {
+    		return;
+    	}
+    	// reset console text
+    	textAreaConsole.setText("");
+    	
     	List<Course> v = scraper.scrape(textfieldURL.getText(), textfieldTerm.getText(),textfieldSubject.getText());
+    	
+    	String catalogOutput = "";
+    	int courseCount = 0;
+    	int sectionCount = 0;
+    	
+    	// loop all courses in this list
     	for (Course c : v) {
     		String newline = c.getTitle() + "\n";
-    		for (int i = 0; i < c.getNumSlots(); i++) {
-    			Slot t = c.getSlot(i);
-    			newline += "Slot " + i + ":" + t + "\n";
+    		courseCount += 1;
+    		
+    		// loop all sections in this course
+    		for (int i = 0; i < c.getNumSections(); i++) {
+    			Section sec = c.getSection(i);
+    			newline += "\tSection: " + sec.getCode() + " (" + sec.getID() + ")\n";
+    			sectionCount += 1;
+    			
+    			// loop all slots in this section
+    			for (int j = 0; j < sec.getNumSlots(); ) {
+        			Slot t = sec.getSlot(j);
+        			j += 1;
+        			newline += "\t\tSlot " + j + ": " + t + "\n";
+        		}
     		}
-    		textAreaConsole.setText(textAreaConsole.getText() + "\n" + newline);
+    		
+    		catalogOutput += "\n" + newline;
     	}
+    	String sectionCountOutput = "Total Number of difference sections in this search: " + sectionCount + "\n";
+    	String courseCountOutput = "Total Number of Course in this search: " + courseCount + "\n";
+    	textAreaConsole.setText(courseCountOutput + sectionCountOutput + "\n" + catalogOutput);
     	
     	//Add a random block on Saturday
     	AnchorPane ap = (AnchorPane)tabTimetable.getContent();
