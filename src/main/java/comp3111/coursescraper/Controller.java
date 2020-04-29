@@ -116,17 +116,8 @@ public class Controller {
 			}
 		}
     }
-
-    @FXML
-    void search() {
-    	if(!isMainURLValid()) {
-    		return;
-    	}
-    	// reset console text
-    	textAreaConsole.setText("");
-    	
-    	List<Course> v = scraper.scrape(textfieldURL.getText(), textfieldTerm.getText(),textfieldSubject.getText());
-    	
+    
+    public String generateConsoleOutput(List<Course> v) {
     	String catalogOutput = "";
     	int courseCount = 0;
     	int sectionCount = 0;
@@ -168,7 +159,7 @@ public class Controller {
     				addStringFromArrayToList(threeTenInstructors, secInstructor);
     			}
     		}
-    		
+    		// append the result of this course
     		catalogOutput += "\n" + newline;
     	}
     	
@@ -180,30 +171,27 @@ public class Controller {
     		noThreeTenInstructors += i + "\n";
     	}
     	
-    	// output
+    	// combine the outputs and return
     	String sectionCountOutput = "Total Number of Different sections in this search: " + sectionCount + "\n";
     	String courseCountOutput = "Total Number of Courses in this search: " + courseCount + "\n";
     	String instructorListOutput = "Instructors who has teaching assignment this term but does not need to teach at Tu 3:10pm: \n" + noThreeTenInstructors + "\n";
-    	textAreaConsole.setText(courseCountOutput + sectionCountOutput + instructorListOutput + catalogOutput);
+    	String consoleOutputResult = courseCountOutput + sectionCountOutput + instructorListOutput + catalogOutput;
     	
-    	//Add a random block on Saturday
-    	AnchorPane ap = (AnchorPane)tabTimetable.getContent();
-    	Label randomLabel = new Label("COMP1022\nL1");
-    	Random r = new Random();
-    	double start = (r.nextInt(10) + 1) * 20 + 40;
+    	return consoleOutputResult; 
+    }
 
-    	randomLabel.setBackground(new Background(new BackgroundFill(Color.BLUE, CornerRadii.EMPTY, Insets.EMPTY)));
-    	randomLabel.setLayoutX(600.0);
-    	randomLabel.setLayoutY(start);
-    	randomLabel.setMinWidth(100.0);
-    	randomLabel.setMaxWidth(100.0);
-    	randomLabel.setMinHeight(60);
-    	randomLabel.setMaxHeight(60);
-    
-    	ap.getChildren().addAll(randomLabel);
-    	
-    	
-    	
+    @FXML
+    void search() {
+    	// check if the URL is valid
+    	if(!isMainURLValid()) {
+    		return;
+    	}
+    	// reset console text
+    	textAreaConsole.setText("");
+    	// scrape using scraper
+    	List<Course> v = scraper.scrape(textfieldURL.getText(), textfieldTerm.getText(),textfieldSubject.getText());
+    	// set output
+    	textAreaConsole.setText(generateConsoleOutput(v));
     }
 
 }
