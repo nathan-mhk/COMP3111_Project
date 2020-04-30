@@ -47,6 +47,10 @@ public class Section {
 		sectionInstructor = instructor;
 	}
 	
+	public String getInstructor() {
+		return sectionInstructor;
+	}
+	
 	public void addSlot(Slot s) {
 		if (numSlots >= DEFAULT_MAX_SLOT)
 			return;
