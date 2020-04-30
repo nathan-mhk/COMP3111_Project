@@ -69,7 +69,10 @@ public class Controller {
     private Button buttonInstructorSfq;
 
     @FXML
-    private TextArea textAreaConsole;
+	private TextArea textAreaConsole;
+	
+	@FXML
+	private AnchorPane anchorPaneFilter;
     
     private Scraper scraper = new Scraper();
     
