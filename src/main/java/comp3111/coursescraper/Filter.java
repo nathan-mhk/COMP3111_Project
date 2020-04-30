@@ -1,11 +1,10 @@
 package comp3111.coursescraper;
-/*
+
+import java.util.*;
+
+/**
  * Filter class is used to handle the filtering ONLY
- * Should be singleton but I prefer all static instead
- * 
- * TODO:
- * Add a reference to a list of unfiltered class
- * Add a reference to a list of filtered class
+ * Need to test if need to be singleton or static
  */
 class Filter {
 	private static boolean all = false;
@@ -24,8 +23,12 @@ class Filter {
 	private static boolean noEx = false;
 	
 	private static boolean labTut = false;
+
+	private static List<Course> unfilteredCourses = null;
+	private static List<Course> filteredCourses = null;
+
 	
-	// Singleton part, optional
+	//#region Singleton
 	private static Filter filter = null;
 	
 	private Filter() {};
@@ -36,11 +39,13 @@ class Filter {
 		}
 		return filter;
 	}
+	//#endregion Singleton
 	
-	//*** Basic checkbox actions
-	
-	/* Toggle all checkboxes
-	 * @return Return the current state of all checkboxes, true == checked, false == unchecked
+	//#region Basic checkbox actions
+
+	/**
+	 * Toggle all checkboxes
+	 * @return the current state of all checkboxes, true == checked, false == unchecked
 	 */
 	static boolean toggleAll() {
 		all = !all;
@@ -115,5 +120,29 @@ class Filter {
 				break;
 		}
 	}
-	//*** Basic checkbox actions end
+	//#endregion Basic checkbox actions end
+
+
+	/**
+	 * Not selecting any filter == not applying those filters
+	 * "Display" sections that have SLOTS that fulfills those filters
+	 * (By display it means you should modify Course, Course.sections and Course.sections.slots accordingly)
+	 */
+
+	/**
+	 * 
+	 * @param courses an unfiltered list of courses
+	 * @return a filtered list of courses
+	 */
+	public static List<Course> filterCourse(List<Course> courses) {
+		unfilteredCourses = courses;
+
+		/**
+		 * TODO:
+		 * Filter courses
+		 */
+
+		return filteredCourses;
+	}
+
 }
