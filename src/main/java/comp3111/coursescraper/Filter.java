@@ -71,52 +71,39 @@ class Filter {
     }
 
     static void check(String filter) {
-        boolean value = false;
-
         switch (filter) {
             case "AM":
                 am = !am;
-                value = am;
                 break;
             case "PM":
                 pm = !pm;
-                value = pm;
                 break;
             case "Monday":
                 mon = !mon;
-                value = mon;
                 break;
             case "Tuesday":
                 tue = !tue;
-                value = tue;
                 break;
             case "Wednesday":
                 wed = !wed;
-                value = wed;
                 break;
             case "Thusday":
                 thu = !thu;
-                value = thu;
                 break;
             case "Friday":
                 fri = !fri;
-                value = fri;
                 break;
             case "Saturday":
                 sat = !sat;
-                value = sat;
                 break;
             case "Common Core":
                 cc = !cc;
-                value = cc;
                 break;
             case "No Exclusion":
                 noEx = !noEx;
-                value = noEx;
                 break;
             case "With Labs or Tutorial":
                 labTut = !labTut;
-                value = labTut;
                 break;
             default:
                 break;
