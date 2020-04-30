@@ -1,10 +1,9 @@
 package comp3111.coursescraper;
 
+// import java.awt.event.ActionEvent;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-import javafx.scene.Node;
 import javafx.scene.control.Button;
-import javafx.scene.control.CheckBox;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.ProgressBar;
@@ -71,9 +70,6 @@ public class Controller {
     @FXML
     private TextArea textAreaConsole;
     
-    @FXML
-    private AnchorPane anchorPaneFilter;
-    
     private Scraper scraper = new Scraper();
     
     @FXML
@@ -91,7 +87,7 @@ public class Controller {
 
     }
     
-    private boolean isMainURLValid() {
+    public boolean isMainURLValid() {
     	// 4 digits only
     	if (textfieldTerm.getText().length() != 4 || !textfieldTerm.getText().matches("^[0-9]*$") ) {
     		textAreaConsole.setText("404 page not found: invalid term. ");
@@ -113,19 +109,15 @@ public class Controller {
     	return true;
     }
     
-    private void addStringFromArrayToList(List<String> list, String [] arr) {
+    public void addStringFromArrayToList(List<String> list, String [] arr) {
     	for (int j = 0; j < arr.length; j++) {
 			if (!list.contains(arr[j]) && !arr[j].contains("TBA")) {
 				list.add(arr[j]);
 			}
 		}
-	}
-	
-	private List<Course> getListOfCourse() {
-		return scraper.scrape(textfieldURL.getText(), textfieldTerm.getText(), textfieldSubject.getText());
-	}
+    }
     
-    private String generateConsoleOutput(List<Course> v) {
+    public String generateConsoleOutput(List<Course> v) {
     	String catalogOutput = "";
     	int courseCount = 0;
     	int sectionCount = 0;
@@ -188,84 +180,18 @@ public class Controller {
     	return consoleOutputResult; 
     }
 
-	private void clearConsoleOutput() {
-		textAreaConsole.setText("");
-	}
-
-	/**
-	 * Generate texts and set it to textAreaConsole
-	 * @param courses a list of courses
-	 */
-	private void setConsoleOutput(List<Course> courses) {
-		// reset console text
-		clearConsoleOutput();
-		textAreaConsole.setText(generateConsoleOutput(courses));
-	}
-
-	/**
-	 * @return true if any filter is applied, else false
-	 */
-	private boolean containFilters() {
-		for (Node node : anchorPaneFilter.getChildren()) {
-			if (node instanceof CheckBox) {
-				if (((CheckBox) node).isSelected()) {
-					return true;
-				}
-			}
-		}
-		return false;
-	}
-
-	private void fetch() {
-		// scrape using scraper and set the console output
-		if (containFilters()) {
-			setConsoleOutput(Filter.filterCourse(getListOfCourse()));
-		} else {
-			setConsoleOutput(getListOfCourse());
-		}
-	}
-
     @FXML
     void search() {
     	// check if the URL is valid
     	if(!isMainURLValid()) {
     		return;
     	}
-    	fetch();
-    }
-
-	/**
-	 *  Handling UI and setting fiteres only
-	 */
-    @FXML
-    void checkFilters(ActionEvent event) {
-    	if (event.getSource() instanceof Button) {
-    		Button btn = (Button) event.getSource();
-    		
-    		boolean allChecked = Filter.toggleAll();
-    		String btnString;
-    		
-    		if (allChecked) {
-    			btnString = "De-select All";
-    		} else {
-    			btnString = "Select All";
-    		}
-    		btn.setText(btnString);
-    		
-    		// Check/Uncheck all boxes visually
-    		for (Node node : anchorPaneFilter.getChildren()) {
-    			if (node instanceof CheckBox) {
-    				((CheckBox) node).setSelected(allChecked);
-    			}
-			}
-			
-    	} else {
-    		CheckBox checkBox = (CheckBox) event.getSource();
-    		Filter.check(checkBox.getText());
-		}
-
-		// Update the search result
-		fetch();
+    	// reset console text
+    	textAreaConsole.setText("");
+    	// scrape using scraper
+    	List<Course> v = scraper.scrape(textfieldURL.getText(), textfieldTerm.getText(),textfieldSubject.getText());
+    	// set output
+    	textAreaConsole.setText(generateConsoleOutput(v));
     }
 
 }

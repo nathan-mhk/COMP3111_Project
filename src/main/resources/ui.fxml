@@ -1,8 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import java.lang.*?>
-<?import javafx.scene.control.*?>
-<?import javafx.scene.layout.*?>
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.CheckBox?>
 <?import javafx.scene.control.Label?>
@@ -18,7 +15,7 @@
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.VBox?>
 
-<VBox prefHeight="679.0" prefWidth="719.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="comp3111.coursescraper.Controller">
+<VBox prefHeight="679.0" prefWidth="719.0" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="comp3111.coursescraper.Controller">
   <children>
     <AnchorPane maxHeight="-1.0" maxWidth="-1.0" prefHeight="437.0" prefWidth="719.0">
       <children>
@@ -56,24 +53,24 @@
                   </Tab>
                 <Tab fx:id="tabFilter" text="Filter">
                   <content>
-                    <AnchorPane fx:id="anchorPaneFilter" minHeight="0.0" minWidth="0.0" prefHeight="450.0" prefWidth="722.0">
+                    <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="450.0" prefWidth="722.0">
                            <children>
-                              <CheckBox layoutX="162.0" layoutY="48.0" mnemonicParsing="false" onAction="#checkFilters" text="AM" />
-                              <CheckBox layoutX="162.0" layoutY="65.0" mnemonicParsing="false" onAction="#checkFilters" text="PM" />
-                              <CheckBox layoutX="243.0" layoutY="48.0" mnemonicParsing="false" onAction="#checkFilters" text="Monday" />
-                              <CheckBox layoutX="243.0" layoutY="65.0" mnemonicParsing="false" onAction="#checkFilters" text="Tuesday" />
-                              <CheckBox layoutX="243.0" layoutY="81.0" mnemonicParsing="false" onAction="#checkFilters" text="Wednesday" />
-                              <CheckBox layoutX="243.0" layoutY="98.0" mnemonicParsing="false" onAction="#checkFilters" text="Thursday" />
-                              <CheckBox layoutX="243.0" layoutY="132.0" mnemonicParsing="false" onAction="#checkFilters" text="Saturday" />
-                              <Button layoutX="162.0" layoutY="14.0" mnemonicParsing="false" onAction="#checkFilters" text="Select All" />
-                              <CheckBox layoutX="360.0" layoutY="48.0" mnemonicParsing="false" onAction="#checkFilters" text="Common Core" />
-                              <CheckBox layoutX="360.0" layoutY="65.0" mnemonicParsing="false" onAction="#checkFilters" text="No Exclusion" />
-                              <CheckBox layoutX="500.0" layoutY="48.0" mnemonicParsing="false" onAction="#checkFilters" text="With Labs or Tutorial" />
+                              <CheckBox layoutX="162.0" layoutY="48.0" mnemonicParsing="false" text="AM" />
+                              <CheckBox layoutX="162.0" layoutY="65.0" mnemonicParsing="false" text="PM" />
+                              <CheckBox layoutX="243.0" layoutY="48.0" mnemonicParsing="false" text="Monday" />
+                              <CheckBox layoutX="243.0" layoutY="65.0" mnemonicParsing="false" text="Tuesday" />
+                              <CheckBox layoutX="243.0" layoutY="81.0" mnemonicParsing="false" text="Wednesday" />
+                              <CheckBox layoutX="243.0" layoutY="98.0" mnemonicParsing="false" text="Thursday" />
+                              <CheckBox layoutX="243.0" layoutY="115.0" mnemonicParsing="false" text="Friday" />
+                              <CheckBox layoutX="243.0" layoutY="132.0" mnemonicParsing="false" text="Saturday" />
+                              <Button layoutX="162.0" layoutY="14.0" mnemonicParsing="false" text="Select All" />
+                              <CheckBox layoutX="360.0" layoutY="48.0" mnemonicParsing="false" text="Common Core" />
+                              <CheckBox layoutX="360.0" layoutY="65.0" mnemonicParsing="false" text="No Exclusion" />
+                              <CheckBox layoutX="500.0" layoutY="48.0" mnemonicParsing="false" text="With Labs or Tutorial" />
                               <Label layoutX="32.0" layoutY="278.0" prefHeight="41.0" prefWidth="642.0" text="* When the filter is applied, display all sections that fulfill all of these conditions; Print them to the console below on any change of checkbox" wrapText="true" />
                               <Label layoutX="21.0" layoutY="88.0" prefHeight="175.0" prefWidth="199.0" text="A course has a section at that time/on that day. A section can be lecture/tutorial/lab. Click AM + Monday does not imply a course has a section on Monday morning. It means there is a section in the morning, but that section may not be on Monday. However, that course must have another Monday section." wrapText="true" />
                               <Label layoutX="338.0" layoutY="107.0" prefHeight="162.0" prefWidth="144.0" text="Common Core refers to 4Y CC; No Exclusion refers to a course does not has any exclusion. Information can be founded on the pop-up text of the &quot;COURSE INFO&quot;" wrapText="true" />
                               <Label layoutX="500.0" layoutY="66.0" prefHeight="83.0" prefWidth="206.0" text="The section code of a Lab must begins with LA, tutorial must begins with T. Code begins with R can be ignored." wrapText="true" />
-                              <CheckBox layoutX="243.0" layoutY="115.0" mnemonicParsing="false" onAction="#checkFilters" text="Friday" />
                            </children>
                         </AnchorPane>
                   </content>
