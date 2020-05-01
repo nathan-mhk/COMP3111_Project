@@ -220,7 +220,7 @@ public class Controller {
 	private void fetch() {
 		// scrape using scraper and set the console output
 		if (containFilters()) {
-			setConsoleOutput(Filter.filterCourse(getListOfCourse()));
+			setConsoleOutput(Filter.filterCourses(getListOfCourse()));
 		} else {
 			setConsoleOutput(getListOfCourse());
 		}
