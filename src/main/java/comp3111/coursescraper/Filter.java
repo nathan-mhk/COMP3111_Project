@@ -35,8 +35,6 @@ class Filter {
     private static List<Course> unfilteredCourses = Collections.emptyList();
     private static List<Course> filteredCourses = Collections.emptyList();
 
-    private static final String SLOT = "SLOT";
-
     /**
      * Toggle all checkboxes at once
      * 
@@ -86,6 +84,27 @@ class Filter {
 
     private static void addMatchedFilters(List<String> matchedFilters, String filterString) {
         if (!matchedFilters.contains(filterString)) {
+            matchedFilters.add(filterString);
+        }
+    }
+
+
+    /**
+     * Check if the labTut filter exist, whether the given section is valid
+     * @param section the section to be checked
+     * @return true if section can satisfy the labTut filter if it is applied
+     */
+    private static boolean matchLabTut(Section section) {
+        String sectionCode = section.getCode();
+        char first = sectionCode.charAt(0);
+        char second = sectionCode.charAt(1);
+
+        if ((first == 'T') || ((first == 'L') && second == 'A')) {
+            return true;
+        }
+        return false;
+
+    }
 
             // Stores the matched filters of any slots
             List<String> matchedFilters = Collections.emptyList();
