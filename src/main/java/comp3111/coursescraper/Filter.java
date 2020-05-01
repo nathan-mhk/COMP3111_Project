@@ -122,7 +122,7 @@ class Filter {
      * @param courses an unfiltered list of courses
      * @return a filtered list of courses
      */
-    public static List<Course> filterCourse(List<Course> courses) {
+    public static List<Course> filterCourses(List<Course> courses) {
         unfilteredCourses = courses;
 
         /**
