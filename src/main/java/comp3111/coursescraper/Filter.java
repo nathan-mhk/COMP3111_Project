@@ -24,8 +24,8 @@ class Filter {
 
     private static boolean labTut = false;
 
-    private static List<Course> unfilteredCourses = null;
-    private static List<Course> filteredCourses = null;
+    private static List<Course> unfilteredCourses = Collections.emptyList();
+    private static List<Course> filteredCourses = Collections.emptyList();
 
     // #region Singleton
     private static Filter filter = null;
