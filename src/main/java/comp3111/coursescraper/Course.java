@@ -1,34 +1,21 @@
 package comp3111.coursescraper;
 
+import java.util.*;
+
 public class Course {
 	private static final int DEFAULT_MAX_SLOT = 20;
 	
-	private String title ; 
-	private String description ;
+	private String title; 
+	private String description;
 	private String exclusion;
-	private Section [] sections;
+	private List<Section> sections;
 	private int numSections;
 	
-	public Course() {		
-		sections = new Section[DEFAULT_MAX_SLOT];
-		for (int i = 0; i < DEFAULT_MAX_SLOT; i++) sections[i] = null;
+	public Course() {
+		sections = Arrays.asList(new Section[DEFAULT_MAX_SLOT]);
+		for (int i = 0; i < DEFAULT_MAX_SLOT; i++)
+			sections.set(i, null);
 		numSections = 0;
-	}
-	
-	public void addSection(Section s) {
-		if (numSections >= DEFAULT_MAX_SLOT)
-			return;
-		sections[numSections++] = s.clone();
-	}
-	
-	public Section getSection(int i) {
-		if (i >= 0 && i < numSections)
-			return sections[i];
-		return null;
-	}
-	
-	public Section getLastSection() {
-		return sections[numSections-1];
 	}
 
 	/**
@@ -73,6 +60,30 @@ public class Course {
 		this.exclusion = exclusion;
 	}
 	
+	public List<Section> getSections() {
+		return sections;
+	}
+
+	public Section getSection(int i) {
+		if (i >= 0 && i < numSections)
+			return sections.get(i);
+		return null;
+	}
+
+	public Section getLastSection() {
+		return sections.get(numSections - 1);
+	}
+
+	public void setSections(List<Section> sections) {
+		this.sections = sections;
+	}
+
+	public void addSection(Section s) {
+		if (numSections >= DEFAULT_MAX_SLOT)
+			return;
+		sections.set(numSections++, s.clone());
+	}
+
 	public int getNumSections() {
 		return numSections;
 	}
