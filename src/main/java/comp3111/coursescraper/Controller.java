@@ -226,6 +226,7 @@ public class Controller {
 	private void fetch() {
 		// scrape using scraper and set the console output
 		if (containFilters()) {
+			// textAreaConsole.setText(Filter.getDebugMessage());
 			filteredCourses = Filter.filterCourses(getListOfCourse());
 			setConsoleOutput(filteredCourses);
 		} else {

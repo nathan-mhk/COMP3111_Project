@@ -118,7 +118,7 @@ public class Section {
 	 * This function set the list of slots for this sections
 	 * @param slots the slots to be set
 	 */
-	public void setSLots(List<Slot> slots) {
+	public void setSlots(List<Slot> slots) {
 		this.slots = slots;
 	}
 	
