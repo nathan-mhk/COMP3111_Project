@@ -2,7 +2,6 @@ package comp3111.coursescraper;
 
 import java.util.*;
 
-<<<<<<< HEAD
 /**
  * <b>Section of a course</b><br>
  * Section stores a section of a course, e.g.: L1, LA2, T3. <br>
@@ -12,8 +11,7 @@ import java.util.*;
  * 
  * @author ethan
  */
-=======
->>>>>>> nathan_dev
+
 public class Section {
 	private static final int DEFAULT_MAX_SLOT = 3;
 	
@@ -49,13 +47,10 @@ public class Section {
 		return s;
 	}
 
-<<<<<<< HEAD
 	/**
 	 * This function return the four digit ID of this section
 	 * @return This return the section's ID
 	 */
-=======
->>>>>>> nathan_dev
 	public int getID() {
 		return sectionID;
 	}
@@ -68,28 +63,28 @@ public class Section {
 		sectionID = id;
 	}
 	
-<<<<<<< HEAD
-	/**
-	 * This function setup the code of a section
-	 * @param code This is the code to be setup
-	 */
-=======
-	public String getCode() {
-		return sectionCode;
-	}
-
->>>>>>> nathan_dev
-	public void setCode(String code) {
-		sectionCode = code;
-	}
-	
-<<<<<<< HEAD
 	/**
 	 * This function return the code of this section
 	 * @return This return the section's code
 	 */
 	public String getCode() {
 		return sectionCode;
+	}
+
+	/**
+	 * This function setup the code of a section
+	 * @param code This is the code to be setup
+	 */
+	public void setCode(String code) {
+		sectionCode = code;
+	}
+
+	/**
+	 * This function return the instructors of this section
+	 * @return This return the section's instructors
+	 */
+	public String getInstructor() {
+		return sectionInstructor;
 	}
 	
 	/**
@@ -98,14 +93,6 @@ public class Section {
 	 */
 	public void setInstructor(String instructor) {
 		sectionInstructor = instructor;
-	}
-	
-	/**
-	 * This function return the instructors of this section
-	 * @return This return the section's instructors
-	 */
-	public String getInstructor() {
-		return sectionInstructor;
 	}
 
 	/**
@@ -125,34 +112,6 @@ public class Section {
 		if (i >= 0 && i < numSlots)
 			return slots.get(i);
 		return null;
-=======
-	public String getInstructor() {
-		return sectionInstructor;
-	}
-
-	public void setInstructor(String instructor) {
-		sectionInstructor = instructor;
-	}
-
-	public List<Slot> getSlots() {
-		return slots;
-	}
-
-	public Slot getSlot(int i) {
-		if (i >= 0 && i < numSlots)
-			return slots.get(i);
-		return null;
-	}
-
-	public void setSLots(List<Slot> slots) {
-		this.slots = slots;
-	}
-	
-	public void addSlot(Slot s) {
-		if (numSlots >= DEFAULT_MAX_SLOT)
-			return;
-		slots.set(numSlots++, s.clone());
->>>>>>> nathan_dev
 	}
 
 	/**
