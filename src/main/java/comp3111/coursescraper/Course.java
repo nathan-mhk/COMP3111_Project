@@ -1,5 +1,6 @@
 package comp3111.coursescraper;
 
+import java.util.*;
 
 /**
  * <b>A Course offered in the semester</b><br>
@@ -11,10 +12,10 @@ package comp3111.coursescraper;
 public class Course {
 	private static final int DEFAULT_MAX_SLOT = 50;
 	
-	private String title ; 
-	private String description ;
+	private String title; 
+	private String description;
 	private String exclusion;
-	private Section [] sections;
+	private List<Section> sections;
 	private int numSections;
 	private boolean isCommonCore;
 	
@@ -23,40 +24,12 @@ public class Course {
 	 * It initialize the array of sections and set the number 
 	 * of sections to zero 
 	 */
-	public Course() {		
-		sections = new Section[DEFAULT_MAX_SLOT];
-		for (int i = 0; i < DEFAULT_MAX_SLOT; i++) sections[i] = null;
+	public Course() {
+		sections = Arrays.asList(new Section[DEFAULT_MAX_SLOT]);
+		for (int i = 0; i < DEFAULT_MAX_SLOT; i++)
+			sections.set(i, null);
 		numSections = 0;
 		isCommonCore = false;
-	}
-	
-	/**
-	 * This function add a section to the array of sections
-	 * @param s The section to be added
-	 */
-	public void addSection(Section s) {
-		if (numSections >= DEFAULT_MAX_SLOT)
-			return;
-		sections[numSections++] = s.clone();
-	}
-	
-	/**
-	 * This function return a specific section at a specific index
-	 * @param i The index of the section 
-	 * @return This is the section returned
-	 */
-	public Section getSection(int i) {
-		if (i >= 0 && i < numSections)
-			return sections[i];
-		return null;
-	}
-	
-	/**
-	 * This function return the last section in this course
-	 * @return The last section located in the array of sections in this course
-	 */
-	public Section getLastSection() {
-		return sections[numSections-1];
 	}
 
 	/**
@@ -107,6 +80,52 @@ public class Course {
 		this.exclusion = exclusion;
 	}
 	
+
+	/**
+	 * This function return a list of sections in this course
+	 * @return list of sections
+	 */
+	public List<Section> getSections() {
+		return sections;
+	}
+
+	/**
+	 * This function return a specific section at a specific index
+	 * @param i The index of the section 
+	 * @return This is the section returned
+	 */
+	public Section getSection(int i) {
+		if (i >= 0 && i < numSections)
+			return sections.get(i);
+		return null;
+	}
+
+	/**
+	 * This function return the last section in this course
+	 * @return The last section located in the array of sections in this course
+	 */
+	public Section getLastSection() {
+		return sections.get(numSections - 1);
+	}
+
+	/**
+	 * This function set the list of sections of this course
+	 * @param sections The list of sections to be set
+	 */
+	public void setSections(List<Section> sections) {
+		this.sections = sections;
+	}
+
+	/**
+	 * This function add a section to the array of sections
+	 * @param s The section to be added
+	 */
+	public void addSection(Section s) {
+		if (numSections >= DEFAULT_MAX_SLOT)
+			return;
+		sections.set(numSections++, s.clone());
+	}
+
 	/**
 	 * This function return the number of sections in this course
 	 * @return This is the number of sections in this course
