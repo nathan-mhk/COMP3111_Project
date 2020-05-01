@@ -237,8 +237,8 @@ public class Controller {
     @FXML
     void search() {
 		// Reset the unfiltered course
-		unfilteredCourses = Collections.emptyList();
-		Filter.reset();
+		unfilteredCourses.clear();
+		Filter.clear();
 
     	// check if the URL is valid
     	if(!isMainURLValid()) {

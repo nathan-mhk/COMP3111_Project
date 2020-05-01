@@ -214,8 +214,10 @@ class Filter {
      */
 
     /**
-     * Check if the slots in the given section matches the applied slot filters (if any). 
-     * Add the slots that fulfilled the filters to the given section
+     * Check if the given section contains valid slots. <br><br>
+     * A slot is valid only if it: <br>
+     * 1. Matches time filters if they are applied <br>
+     * 2. Matches day filters if they are applied <br>
      * @param section the section to be checked
      * @return true if the given section have slots that fulfills the slot filters
      * and have been successfully added to the given section. Or there are no slot filters applied
@@ -282,7 +284,11 @@ class Filter {
     }
 
     /**
-     * Check if the given course contains sections that fulfills the filters
+     * Check if the given course contains valid sections. <br><br>
+     * A section is considered valid only if it: <br>
+     * 1. Matches lab & tut filter if it is applied <br>
+     * 2. Contains valid slots <br>
+     * 
      * @param course the course to be checked
      * @return true if the course contains sections that fulfills the filters
      */
@@ -290,10 +296,6 @@ class Filter {
         List<Section> filteredSections = Collections.emptyList();
 
         for (Section section : course.getSections()) {
-            /**
-             * TODO
-             * Filters labs or tutorial
-             */
 
             final boolean haveLabTutFilter = filters.get(LABTUT);
             final boolean matchLabTutFilter = matchLabTut(section);
@@ -303,7 +305,6 @@ class Filter {
             if ((!haveLabTutFilter || matchLabTutFilter) && containsSlots) {
                 filteredSections.add(section);
             }
-            
         }
         if (!filteredSections.isEmpty()) {
             course.setSections(filteredSections);
@@ -326,14 +327,19 @@ class Filter {
         } else {
             /**
              * 3 layers filtering:
-            *       1. Course
-            *       2. Course.sections
-            *       3. Course.sections.slots
-            *  This is the layer of filtering out courses
-            */
+             * 1. Course
+             * 2. Course.sections
+             * 3. Course.sections.slots
+             * 
+             * This is the layer of filtering out courses
+             * A course is considered valid only if it:
+             * 1. Matches CC filter if it is applied
+             * 2. Matches no exclusion filter if it is applied
+             * 3. Contains valid sections
+             */
 
             for (Course course : unfilteredCourses) {
-                // Filters exclusion and CC
+                // Filters CC and no exclusion
                 final boolean haveCCFilter = filters.get(CC);
                 final boolean matchCCFilter = course.getCC();
 
@@ -351,21 +357,24 @@ class Filter {
         return filteredCourses;
     }
 
-    public static void reset() {
-        unfilteredCourses = Collections.emptyList();
-        filteredCourses = Collections.emptyList();
+    /**
+     * Reset the stored unfiltered courses and filtered courses
+     */
+    public static void clear() {
+        unfilteredCourses.clear();
+        filteredCourses.clear();
     }
 
+    /**
+     * Get a debug message which contains the information of all filterse
+     * @return information of all filters
+     */
     public static String getDebugMessage() {
         StringBuilder stringBuilder = new StringBuilder();
         
         for (Map.Entry<String, Boolean> entry : filters.entrySet()) {
             stringBuilder.append(entry.getKey()).append(":\t\t").append(entry.getValue()).append("\n");
         }
-        stringBuilder.append("haveFilters:\t\t").append(haveFilters()).append("\n");
-        stringBuilder.append("haveTimeFilters:\t\t").append(haveTimeFilters()).append("\n");
-        stringBuilder.append("haveDayFilters:\t\t").append(haveDayFilters()).append("\n");
-
         return stringBuilder.toString();
     }
 }
