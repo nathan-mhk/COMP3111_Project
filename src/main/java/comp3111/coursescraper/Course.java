@@ -16,6 +16,7 @@ public class Course {
 	private String exclusion;
 	private Section [] sections;
 	private int numSections;
+	private boolean isCommonCore;
 	
 	/**
 	 * This function is the constructor of Course
@@ -26,6 +27,7 @@ public class Course {
 		sections = new Section[DEFAULT_MAX_SLOT];
 		for (int i = 0; i < DEFAULT_MAX_SLOT; i++) sections[i] = null;
 		numSections = 0;
+		isCommonCore = false;
 	}
 	
 	/**
@@ -119,5 +121,21 @@ public class Course {
 	 */
 	public void setNumSections(int numSections) {
 		this.numSections = numSections;
+	}
+	
+	/**
+	 * This function return if this course is common core
+	 * @return This show whether this course is common core
+	 */
+	public boolean getCC() {
+		return isCommonCore;
+	}
+	
+	/**
+	 * This function setup if this course is common core
+	 * @param state This is the state to be set
+	 */
+	public void setCC(boolean state) {
+		this.isCommonCore = state;
 	}
 }

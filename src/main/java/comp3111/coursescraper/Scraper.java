@@ -87,7 +87,7 @@ public class Scraper {
 		client.getOptions().setJavaScriptEnabled(false);
 	}
 
-	public boolean validateSection(String Code) {
+	private boolean validateSection(String Code) {
 		// validate the section
 		String CodeType = Code.replaceAll("[0-9]", "");
 		if (!CodeType.contains("L") && !CodeType.contains("LA") && !CodeType.contains("T"))
@@ -160,11 +160,17 @@ public class Scraper {
 				for ( HtmlElement e : (List<HtmlElement>)popupdetailslist) {
 					HtmlElement t = (HtmlElement) e.getFirstByXPath(".//th");
 					HtmlElement d = (HtmlElement) e.getFirstByXPath(".//td");
+					
 					if (t.asText().equals("EXCLUSION")) {
-						exclusion = d;
+						c.setExclusion(d.asText());
+					}else if (t.asText().equals("ATTRIBUTES")) {
+						if(d.asText().contains("Common Core") && d.asText().contains("for 4Y programs")) {
+							c.setCC(true);
+						}
+					}else if (t.asText().equals("DESCRIPTION")) {
+						c.setDescription(d.asText());
 					}
 				}
-				c.setExclusion((exclusion == null ? "null" : exclusion.asText()));
 				
 				List<?> sections = (List<?>) htmlItem.getByXPath(".//tr[contains(@class,'newsect')]");
 				
