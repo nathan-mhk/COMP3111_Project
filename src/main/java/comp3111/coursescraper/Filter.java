@@ -3,113 +3,108 @@ package comp3111.coursescraper;
 import java.util.*;
 
 /**
- * Filter class is used to handle the filtering ONLY
- * Need to test if need to be singleton or static
+ * <b>Filter helper class</b><br>
+ * This class is used to handle the filtering only. <br>
+ * 
+ * @author Nathan
  */
 class Filter {
+    private static final String AM = "AM";
+    private static final String PM = "PM";
+    private static final String MON = "Monday";
+    private static final String TUE = "Tuesday";
+    private static final String WED = "Wednesday";
+    private static final String THU = "Thursday";
+    private static final String FRI = "Friday";
+    private static final String SAT = "Saturday";
+    private static final String CC = "Common Core";
+    private static final String NOEX = "No Exclusion";
+    private static final String LABTUT = "With Labs or Tutorial";
+
+    private static final List<String> FILTERS_NAME = Arrays.asList(AM, PM, MON, TUE, WED, THU, FRI, SAT, CC, NOEX, LABTUT);
+
+    private static Map<String, Boolean> filters = new HashMap<String, Boolean>();
+    static {
+        for (int i = 0; i < FILTERS_NAME.size(); ++i) {
+            filters.put(FILTERS_NAME.get(i), false);
+        }
+    }
+
     private static boolean all = false;
-
-    private static boolean am = false;
-    private static boolean pm = false;
-
-    private static boolean mon = false;
-    private static boolean tue = false;
-    private static boolean wed = false;
-    private static boolean thu = false;
-    private static boolean fri = false;
-    private static boolean sat = false;
-
-    private static boolean cc = false;
-    private static boolean noEx = false;
-
-    private static boolean labTut = false;
 
     private static List<Course> unfilteredCourses = Collections.emptyList();
     private static List<Course> filteredCourses = Collections.emptyList();
 
-    // #region Singleton
-    private static Filter filter = null;
-
-    private Filter() {
-    };
-
-    public static Filter getInstance() {
-        if (filter == null) {
-            filter = new Filter();
-        }
-        return filter;
-    }
-    // #endregion Singleton
-
-    // #region Basic checkbox actions
+    private static final String SLOT = "SLOT";
 
     /**
-     * Toggle all checkboxes
+     * Toggle all checkboxes at once
      * 
-     * @return the current state of all checkboxes, true == checked, false ==
-     *         unchecked
+     * @return the current state of all checkboxes, true == checked, false == unchecked
      */
     static boolean toggleAll() {
         all = !all;
-
-        am = all;
-        pm = all;
-
-        mon = all;
-        tue = all;
-        wed = all;
-        thu = all;
-        fri = all;
-        sat = all;
-
-        cc = all;
-        noEx = all;
-
-        labTut = all;
-
+        filters.replaceAll((key, bool)->bool = all);
         return all;
     }
 
+    /**
+     * Toggle a checkbox
+     * 
+     * @param filter the text of the checkbox
+     */
     static void check(String filter) {
-        switch (filter) {
-            case "AM":
-                am = !am;
-                break;
-            case "PM":
-                pm = !pm;
-                break;
-            case "Monday":
-                mon = !mon;
-                break;
-            case "Tuesday":
-                tue = !tue;
-                break;
-            case "Wednesday":
-                wed = !wed;
-                break;
-            case "Thusday":
-                thu = !thu;
-                break;
-            case "Friday":
-                fri = !fri;
-                break;
-            case "Saturday":
-                sat = !sat;
-                break;
-            case "Common Core":
-                cc = !cc;
-                break;
-            case "No Exclusion":
-                noEx = !noEx;
-                break;
-            case "With Labs or Tutorial":
-                labTut = !labTut;
-                break;
-            default:
-                break;
+        filters.replace(filter, !filters.get(filter));
+    }
+
+    /**
+     * Check if any filters are applied
+     * 
+     * @return true if contain any filters, false if contain 0 filters
+     */
+    private static boolean haveFilters() {
+        return filters.containsValue(true);
+    }
+
+    /**
+     * Check if any time filters are applied (am/pm)
+     * 
+     * @return true if contain any time filters, false if none
+     */
+    private static boolean haveTimeFilters() {
+        return (filters.get(AM) || filters.get(PM));
+    }
+
+    /**
+     * Check if any day filters are applied (mon/tue/etc)
+     * 
+     * @return true if contain any days filters, false if none
+     */
+    private static boolean haveDayFilters() {
+        return (filters.get(MON) || filters.get(TUE) || filters.get(WED) || filters.get(THU) || filters.get(FRI) || filters.get(SAT));
+    }
+
+    private static void addMatchedFilters(List<String> matchedFilters, String filterString) {
+        if (!matchedFilters.contains(filterString)) {
+
+            // Stores the matched filters of any slots
+            List<String> matchedFilters = Collections.emptyList();
+
+            for (Slot slot : slots) {
+                if (haveTimeFilters && matchTime(slot, matchedFilters)) {
+
+            if (filtersMatched(matchedFilters, SLOT)) {
+
+                    }
+
+            if (!filteredSlots.isEmpty()) {
+                section.setSlots(filteredSlots);
+                return true;
+            } else {
+                return false;
+            }
         }
     }
-    // #endregion Basic checkbox actions end
 
     /**
      * Not selecting any filter == not applying those filters "Display" sections
@@ -132,4 +127,21 @@ class Filter {
         return filteredCourses;
     }
 
+    public static void reset() {
+        unfilteredCourses = Collections.emptyList();
+        filteredCourses = Collections.emptyList();
+    }
+
+    public static String getDebugMessage() {
+        StringBuilder stringBuilder = new StringBuilder();
+        
+        for (Map.Entry<String, Boolean> entry : filters.entrySet()) {
+            stringBuilder.append(entry.getKey()).append(":\t\t").append(entry.getValue()).append("\n");
+        }
+        stringBuilder.append("haveFilters:\t\t").append(haveFilters()).append("\n");
+        stringBuilder.append("haveTimeFilters:\t\t").append(haveTimeFilters()).append("\n");
+        stringBuilder.append("haveDayFilters:\t\t").append(haveDayFilters()).append("\n");
+
+        return stringBuilder.toString();
+    }
 }
