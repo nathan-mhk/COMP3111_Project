@@ -107,23 +107,72 @@ class Filter {
     }
 
     /**
-     * Not selecting any filter == not applying those filters "Display" sections
-     * that have SLOTS that fulfills those filters (By display it means you should
-     * modify Course, Course.sections and Course.sections.slots accordingly)
+     * Check if the given course contains sections that fulfills the filters
+     * @param course the course to be checked
+     * @return true if the course contains sections that fulfills the filters
      */
+    private static boolean filterSections(Course course) {
+        List<Section> filteredSections = Collections.emptyList();
+
+        for (Section section : course.getSections()) {
+            /**
+             * TODO
+             * Filters labs or tutorial
+             */
+
+            final boolean haveLabTutFilter = filters.get(LABTUT);
+            final boolean matchLabTutFilter = matchLabTut(section);
+            final boolean containsSlots = filterSlots(section);
+
+            // CNF
+            if ((!haveLabTutFilter || matchLabTutFilter) && containsSlots) {
+                filteredSections.add(section);
+            }
+            
+        }
+        if (!filteredSections.isEmpty()) {
+            course.setSections(filteredSections);
+            return true;
+        } else {
+            return false;
+        }
+    }
 
     /**
-     * 
+     * Filter the course according to the selected filters
      * @param courses a list of unfiltered courses
      * @return a list of filtered courses
      */
     public static List<Course> filterCourses(List<Course> courses) {
         unfilteredCourses = courses;
 
-        /**
-         * TODO: Filter courses Test1
-         */
+        if (!haveFilters()) {
+            filteredCourses = unfilteredCourses;
+        } else {
+            /**
+             * 3 layers filtering:
+            *       1. Course
+            *       2. Course.sections
+            *       3. Course.sections.slots
+            *  This is the layer of filtering out courses
+            */
 
+            for (Course course : unfilteredCourses) {
+                // Filters exclusion and CC
+                final boolean haveCCFilter = filters.get(CC);
+                final boolean matchCCFilter = course.getCC();
+
+                final boolean haveExFilter = filters.get(NOEX);
+                final boolean matchExFilter = !(course.getExclusion().isEmpty());
+
+                final boolean containsSections = filterSections(course);
+
+                // CNF
+                if ((!haveCCFilter || matchCCFilter) && (!haveExFilter || matchExFilter) && containsSections) {
+                    filteredCourses.add(course);
+                }
+            }
+        }
         return filteredCourses;
     }
 
