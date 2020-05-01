@@ -3,8 +3,8 @@ package comp3111.coursescraper;
 import java.util.*;
 
 /**
- * Filter class is used to handle the filtering ONLY Need to test if need to be
- * singleton or static
+ * Filter class is used to handle the filtering ONLY
+ * Need to test if need to be singleton or static
  */
 class Filter {
     private static boolean all = false;
@@ -119,8 +119,8 @@ class Filter {
 
     /**
      * 
-     * @param courses an unfiltered list of courses
-     * @return a filtered list of courses
+     * @param courses a list of unfiltered courses
+     * @return a list of filtered courses
      */
     public static List<Course> filterCourses(List<Course> courses) {
         unfilteredCourses = courses;

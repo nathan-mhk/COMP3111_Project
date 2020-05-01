@@ -74,7 +74,10 @@ public class Controller {
 	@FXML
 	private AnchorPane anchorPaneFilter;
     
-    private Scraper scraper = new Scraper();
+	private Scraper scraper = new Scraper();
+	private List<Course> unfilteredCourses = Collections.emptyList();
+	private List<Course> filteredCourses = Collections.emptyList();
+	private List<Course> enrolledCourses = Collections.emptyList();
     
     @FXML
     void allSubjectSearch() {
@@ -122,7 +125,10 @@ public class Controller {
 	}
 	
 	private List<Course> getListOfCourse() {
-		return scraper.scrape(textfieldURL.getText(), textfieldTerm.getText(), textfieldSubject.getText());
+		if (unfilteredCourses.isEmpty()) {
+			unfilteredCourses = scraper.scrape(textfieldURL.getText(), textfieldTerm.getText(), textfieldSubject.getText());
+		}
+		return unfilteredCourses;
 	}
     
     private String generateConsoleOutput(List<Course> v) {
@@ -220,7 +226,8 @@ public class Controller {
 	private void fetch() {
 		// scrape using scraper and set the console output
 		if (containFilters()) {
-			setConsoleOutput(Filter.filterCourses(getListOfCourse()));
+			filteredCourses = Filter.filterCourses(getListOfCourse());
+			setConsoleOutput(filteredCourses);
 		} else {
 			setConsoleOutput(getListOfCourse());
 		}
@@ -228,6 +235,9 @@ public class Controller {
 
     @FXML
     void search() {
+		// Reset the unfitlered course
+		unfilteredCourses = Collections.emptyList();
+
     	// check if the URL is valid
     	if(!isMainURLValid()) {
     		return;
