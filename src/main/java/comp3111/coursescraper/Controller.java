@@ -235,7 +235,7 @@ public class Controller {
 
     @FXML
     void search() {
-		// Reset the unfitlered course
+		// Reset the unfiltered course
 		unfilteredCourses = Collections.emptyList();
 
     	// check if the URL is valid
@@ -246,7 +246,7 @@ public class Controller {
 	}
 	
 	/**
-	 * Handling UI and setting fiteres only
+	 * Handling UI and setting filters only
 	 */
 	@FXML
 	void checkFilters(ActionEvent event) {
