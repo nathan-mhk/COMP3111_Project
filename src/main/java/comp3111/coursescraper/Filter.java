@@ -293,7 +293,8 @@ class Filter {
     private static boolean filterSections(Course course) {
         Vector<Section> filteredSections = new Vector<Section>();
 
-        for (Section section : course.getSections()) {
+        for (int i = 0; i < course.getNumSections(); i++) {
+            Section section = course.getSection(i);
 
             final boolean haveLabTutFilter = filters.get(LABTUT);
             final boolean matchLabTutFilter = matchLabTut(section);
@@ -306,6 +307,7 @@ class Filter {
         }
         if (!filteredSections.isEmpty()) {
             course.setSections(filteredSections);
+            course.setNumSections(filteredSections.size());
             return true;
         } else {
             return false;
