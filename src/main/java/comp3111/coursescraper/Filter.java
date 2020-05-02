@@ -79,72 +79,86 @@ class Filter {
         return (filters.get(MON) || filters.get(TUE) || filters.get(WED) || filters.get(THU) || filters.get(FRI) || filters.get(SAT));
     }
 
-    private static void addMatchedFilters(List<String> matchedFilters, String filterString) {
-        if (!matchedFilters.contains(filterString)) {
-            matchedFilters.add(filterString);
+    /**
+     * Get a list of applied day fitlers 
+     * @return a list of applied day filters
+     */
+    private static Vector<String> getDayFilters() {
+        Vector<String> dayFilters = new Vector<String>();
+
+        if (filters.get(MON)) {
+            dayFilters.add(MON);
         }
+        if (filters.get(TUE)) {
+            dayFilters.add(TUE);
+        }
+        if (filters.get(WED)) {
+            dayFilters.add(WED);
+        }
+        if (filters.get(THU)) {
+            dayFilters.add(THU);
+        }
+        if (filters.get(FRI)) {
+            dayFilters.add(FRI);
+        }
+        if (filters.get(SAT)) {
+            dayFilters.add(SAT);
+        }
+
+        return dayFilters;
     }
 
-    /**
-     * Check if the given slot matches the time filters. 
-     * Add the matching filters to machedFilters
-     * 
-     * @param slot the slot to be matched
-     * @param matchedFilters a map that contains matched filters
-     * @return true if the slot matches the time filters
-     */
-    private static boolean matchTime(Slot slot, List<String> matchedFilters) {
-        final boolean am = filters.get(AM);
-        final boolean pm = filters.get(PM);
+    private static boolean matchTime(Vector<Slot> slots) {
+        // If the given slots contains slots such that all filters are matched
+        // Remove those slots that can't
+        
+        final boolean haveAM = filters.get(AM);
+        final boolean havePM = filters.get(PM);
 
-        final int middle = 12;
-        final int startTime = slot.getStartHour();
-        final int endTime = slot.getEndHour();
+        for (Iterator<Slot> itr = slots.iterator(); itr.hasNext();) {
+            Slot slot = itr.next();
 
-        if ((am && pm) && ((startTime < middle) && (endTime >= middle))) {
-            /**
-             * Special case, one slot fulfilling 2 filters simultaneously
-             */
-            addMatchedFilters(matchedFilters, AM);
-            addMatchedFilters(matchedFilters, PM);
-            return true;
+            final int middle = 12;
+            final int startTime = slot.getStartHour();
+            // final int endTime = slot.getEndHour();
+
+            final boolean matchAM = (startTime < middle);
+            final boolean matchPM = (startTime >= middle);
+
+            // CNF
+            if ((!haveAM || !matchAM) && (!havePM || !matchPM)) {
+                itr.remove();
+            }
         }
-        if (am && (startTime < middle)) {
-            addMatchedFilters(matchedFilters, AM);
-            return true;
-        }
-        if (pm && (startTime >= middle)) {
-            addMatchedFilters(matchedFilters, PM);
-            return true;
-        }
-        return false;        
+        return (slots.size() != 0);
     }
 
-    /**
-     * Check if the given slot matches the day filters. 
-     * Add the matching filters to machedFilters
-     * 
-     * @param slot the slot to be matched
-     * @param matchedFilters a map that contains matched filters
-     * @return true if the slot matches the day filters
-     */
-    private static boolean matchDay(Slot slot, List<String> matchedFilters) {
+    private static boolean matchDay(Vector<Slot> slots) {
+        // If the given slots contains slots that can fulfill all
+        // Remove the slot that can't
+
+        List<String> dayFilters = getDayFilters();
+
         final int DAYS_OFFSET_START = FILTERS_NAME.indexOf(MON);
         final int DAYS_OFFSET_END = FILTERS_NAME.indexOf(SAT);
 
-        final int index = slot.getDay() + DAYS_OFFSET_START;
+        for (Iterator<Slot> itr = slots.iterator(); itr.hasNext();) {
+            Slot slot = itr.next();
 
-        // In case the value get from slot.getDay() is out of bounds
-        if ((index >= DAYS_OFFSET_START) && (index <= DAYS_OFFSET_END)) {
-            String filterString = FILTERS_NAME.get(index);
-            boolean matched = filters.get(filterString);
+            final int index = slot.getDay() + DAYS_OFFSET_START;
 
-            if (matched) {
-                 addMatchedFilters(matchedFilters, filterString);
-                 return true;
+            // In case the value get from slot.getDay() is out of bounds
+            if ((index >= DAYS_OFFSET_START) && (index <= DAYS_OFFSET_END)) {
+
+                String day = FILTERS_NAME.get(index);
+                if (dayFilters.contains(day)) {
+                    dayFilters.remove(day);
+                } else {
+                    itr.remove();
+                }
             }
         }
-        return false;
+        return ((dayFilters.size() == 0) && (slots.size() != 0));
     }
 
     /**
@@ -165,45 +179,6 @@ class Filter {
     }
 
     /**
-     * Get a map of slot fitlers (time and day filters)
-     * @return a map of slot filters
-     */
-    private static Map<String, Boolean> getSlotFilters() {
-        Map<String, Boolean> slotFilters = new HashMap<String, Boolean>();
-
-        slotFilters.put(AM, filters.get(AM));
-        slotFilters.put(PM, filters.get(PM));
-
-        slotFilters.put(MON, filters.get(MON));
-        slotFilters.put(TUE, filters.get(TUE));
-        slotFilters.put(WED, filters.get(WED));
-        slotFilters.put(THU, filters.get(THU));
-        slotFilters.put(FRI, filters.get(FRI));
-        slotFilters.put(SAT, filters.get(SAT));
-
-        return slotFilters;
-    }
-
-    /**
-     * Check if the matched filters can fulfill the corresponding type of filters set
-     * @param matchedFilters A list of matched filters
-     * @param type The type of the list of matched filters
-     * @return true of the list of matched filters fulfills the list of applied filters of the same type
-     */
-    private static boolean filtersMatched(List<String> matchedFilters) {
-        for (Map.Entry<String, Boolean> entry : getSlotFilters().entrySet()) {
-            // Iterate until the value of current key is true, i.e. the current filter is applied
-            if (entry.getValue()) {
-                // If the current filter is inside matchedFilters, pop the one in matchedFilters
-                if (!matchedFilters.contains(entry.getKey())) {
-                    return false;
-                }
-            }
-        }
-        return true;
-    }
-
-    /**
      * Not selecting any filter == not applying those filters 
      * "Display" sections that have ***SLOTS*** that fulfills those filters
      * (By display it means you should modify Course, Course.sections and Course.sections.slots accordingly)
@@ -212,7 +187,7 @@ class Filter {
 
     /**
      * Check if the given section contains valid slots. <br><br>
-     * A slot is valid only if it: <br>
+     * A slot is valid if it: <br>
      * 1. Matches time filters if they are applied <br>
      * 2. Matches day filters if they are applied <br>
      * 
@@ -220,64 +195,29 @@ class Filter {
      * @return true if section contains valid sections
      */
     private static boolean filterSlots(Section section) {
-        // FIXME: Overhaul?
-        List<Slot> slots = section.getSlots();
-
-        boolean haveTimeFilters = haveTimeFilters();
-        boolean haveDayFilters = haveDayFilters();
+        final boolean haveTimeFilters = haveTimeFilters();
+        final boolean haveDayFilters = haveDayFilters();
 
         if (!haveTimeFilters && !haveDayFilters) {
             // No time and day filters are applied
             return true;
         } else {
-            List<Slot> filteredSlots = Collections.emptyList();
+            Vector<Slot> slots = new Vector<Slot>();
 
-            // Stores slots that fulfills time/day filters
-            List<Slot> tempTimeList = Collections.emptyList();
-            List<Slot> tempDayList = Collections.emptyList();
-
-            // Stores the matched filters of any slots
-            List<String> matchedFilters = Collections.emptyList();
-
-            for (Slot slot : slots) {
-                if (haveTimeFilters && matchTime(slot, matchedFilters)) {
-                    tempTimeList.add(slot);
-                }
-                if (haveDayFilters && matchDay(slot, matchedFilters)) {
-                   tempDayList.add(slot);
-                }
+            for (int i = 0; i < section.getNumSlots(); ++i) {
+                slots.add(section.getSlot(i));
             }
 
-            if (filtersMatched(matchedFilters)) {
-                if (haveTimeFilters && haveDayFilters && (tempTimeList.size() != 0) && (tempDayList.size() != 0)) {
-                    for (Slot slot : tempTimeList) {
-                        if (!filteredSlots.contains(slot)) {
-                            filteredSlots.add(slot);
-                        }
-                    }
-                    for (Slot slot : tempDayList) {
-                        if (!filteredSlots.contains(slot)) {
-                            filteredSlots.add(slot);
-                        }
-                    }
-                } else if (haveTimeFilters && !haveDayFilters && (tempTimeList.size() != 0)) {
-                    for (Slot slot : tempTimeList) {
-                        filteredSlots.add(slot);
-
-                    }
-                } else if (!haveTimeFilters && haveDayFilters && (tempDayList.size() != 0)) {
-                    for (Slot slot : tempDayList) {
-                        filteredSlots.add(slot);
-                    }
-                }
-            }
-
-            if (!filteredSlots.isEmpty()) {
-                section.setSlots(filteredSlots);
+            /**
+             * CNF, added a duplicated case which will never happened, 
+             * as checked already, but simplifies the expression
+             */
+            if ((!haveTimeFilters || matchTime(slots)) && (!haveDayFilters || matchDay(slots))) {
+                section.setSlots(slots);
+                section.setNumSlots(slots.size());
                 return true;
-            } else {
-                return false;
             }
+            return false;
         }
     }
 
