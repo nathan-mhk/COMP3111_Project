@@ -80,7 +80,25 @@ class Filter {
     }
 
     /**
+     * Get a list of applied time filters
+     * 
+     * @return a list of applied time filters
+     */
+    private static Vector<String> getTimeFilteres() {
+        Vector<String> timeFilters = new Vector<String>();
+
+        if (filters.get(AM)) {
+            timeFilters.add(AM);
+        }
+        if (filters.get(PM)) {
+            timeFilters.add(PM);
+        }
+        return timeFilters;
+    }
+
+    /**
      * Get a list of applied day fitlers 
+     * 
      * @return a list of applied day filters
      */
     private static Vector<String> getDayFilters() {
@@ -108,10 +126,18 @@ class Filter {
         return dayFilters;
     }
 
+    /**
+     * Check if the given slots can fulfill all applied time filters. 
+     * Remove slots that cannot fulfill the filters in the mean time
+     * 
+     * @param slots slots to be checked
+     * 
+     * @return true if there are slots inside the given list that 
+     * together can fulfill all applied time filters
+     */
     private static boolean matchTime(Vector<Slot> slots) {
-        // If the given slots contains slots such that all filters are matched
-        // Remove those slots that can't
-        
+        List<String> unmatchedFilters = getTimeFilteres();
+
         final boolean haveAM = filters.get(AM);
         final boolean havePM = filters.get(PM);
 
@@ -120,51 +146,69 @@ class Filter {
 
             final int middle = 12;
             final int startTime = slot.getStartHour();
-            // final int endTime = slot.getEndHour();
+            final int endTime = slot.getEndHour();
 
             final boolean matchAM = (startTime < middle);
             final boolean matchPM = (startTime >= middle);
+            final boolean matchBoth = (matchAM && (endTime >= middle));
 
-            // CNF
-            if ((!haveAM || !matchAM) && (!havePM || !matchPM)) {
+            if (matchAM) {
+                unmatchedFilters.remove(AM);
+            }
+            if (matchPM) {
+                unmatchedFilters.remove(PM);
+            }
+            if (haveAM && havePM && matchBoth) {
+                unmatchedFilters.remove(PM);
+            }
+            if ((haveAM && !havePM && !matchAM) || (!haveAM && havePM && !matchPM)) {
                 itr.remove();
             }
         }
-        return (slots.size() != 0);
+        return ((unmatchedFilters.size() == 0) && (slots.size() != 0));
     }
 
+    /**
+     * Check if the given slots can fulfill all applied day filters. 
+     * Remove slots that cannot fulfill the filters in the mean time
+     * 
+     * @param slots slots to be checked
+     * 
+     * @return true if there are slots inside the given list that 
+     * together can fulfill all applied day filters
+     */
     private static boolean matchDay(Vector<Slot> slots) {
-        // If the given slots contains slots that can fulfill all
-        // Remove the slot that can't
-
         List<String> dayFilters = getDayFilters();
+        List<String> unmatchedFilters = getDayFilters();
 
-        final int DAYS_OFFSET_START = FILTERS_NAME.indexOf(MON);
-        final int DAYS_OFFSET_END = FILTERS_NAME.indexOf(SAT);
+        final int offsetStart = FILTERS_NAME.indexOf(MON);
+        final int offsetEnd = FILTERS_NAME.indexOf(SAT);
 
         for (Iterator<Slot> itr = slots.iterator(); itr.hasNext();) {
             Slot slot = itr.next();
 
-            final int index = slot.getDay() + DAYS_OFFSET_START;
+            final int index = slot.getDay() + offsetStart;
 
             // In case the value get from slot.getDay() is out of bounds
-            if ((index >= DAYS_OFFSET_START) && (index <= DAYS_OFFSET_END)) {
-
+            if ((index >= offsetStart) && (index <= offsetEnd)) {
                 String day = FILTERS_NAME.get(index);
+
                 if (dayFilters.contains(day)) {
-                    dayFilters.remove(day);
+                    unmatchedFilters.remove(day);
                 } else {
                     itr.remove();
                 }
             }
         }
-        return ((dayFilters.size() == 0) && (slots.size() != 0));
+        return ((unmatchedFilters.size() == 0) && (slots.size() != 0));
     }
 
     /**
-     * Check if the labTut filter exist, whether the given section is valid
+     * Check if the given section is a lab or tutorial
+     * 
      * @param section the section to be checked
-     * @return true if section can satisfy the labTut filter if it is applied
+     * 
+     * @return true if section is a lab or tutorial
      */
     private static boolean matchLabTut(Section section) {
         String sectionCode = section.getCode();
@@ -175,15 +219,7 @@ class Filter {
             return true;
         }
         return false;
-
     }
-
-    /**
-     * Not selecting any filter == not applying those filters 
-     * "Display" sections that have ***SLOTS*** that fulfills those filters
-     * (By display it means you should modify Course, Course.sections and Course.sections.slots accordingly)
-     * Section::sectionCode (String, Lx = lecture, LAx = lab, Tx = tutorial)
-     */
 
     /**
      * Check if the given section contains valid slots. <br><br>
@@ -192,14 +228,15 @@ class Filter {
      * 2. Matches day filters if they are applied <br>
      * 
      * @param section the section to be checked
-     * @return true if section contains valid sections
+     * 
+     * @return true if section contains valid sections or 
+     * no time and day filters are applied
      */
     private static boolean filterSlots(Section section) {
         final boolean haveTimeFilters = haveTimeFilters();
         final boolean haveDayFilters = haveDayFilters();
 
         if (!haveTimeFilters && !haveDayFilters) {
-            // No time and day filters are applied
             return true;
         } else {
             Vector<Slot> slots = new Vector<Slot>();
@@ -209,8 +246,8 @@ class Filter {
             }
 
             /**
-             * CNF, added a duplicated case which will never happened, 
-             * as checked already, but simplifies the expression
+             * CNF, added a duplicated case which will never happened 
+             * (checked already), but can make the expression more simplify
              */
             if ((!haveTimeFilters || matchTime(slots)) && (!haveDayFilters || matchDay(slots))) {
                 section.setSlots(slots);
@@ -228,6 +265,7 @@ class Filter {
      * 2. Contains valid slots <br>
      * 
      * @param course the course to be checked
+     * 
      * @return true if course contains valid sections
      */
     private static boolean filterSections(Course course) {
@@ -284,7 +322,6 @@ class Filter {
              */
 
             for (Course course : unfilteredCourses) {
-                // Filters CC and no exclusion
                 final boolean haveCCFilter = filters.get(CC);
                 final boolean matchCCFilter = course.getCC();
 
