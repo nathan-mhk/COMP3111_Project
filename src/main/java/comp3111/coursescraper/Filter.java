@@ -291,7 +291,7 @@ class Filter {
      * @return true if course contains valid sections
      */
     private static boolean filterSections(Course course) {
-        List<Section> filteredSections = Collections.emptyList();
+        Vector<Section> filteredSections = new Vector<Section>();
 
         for (Section section : course.getSections()) {
 
@@ -321,8 +321,8 @@ class Filter {
         if (!haveFilters()) {
             return courses;
         } else {
-            List<Course> unfilteredCourses = Collections.emptyList();
-            List<Course> filteredCourses = Collections.emptyList();
+            Vector<Course> unfilteredCourses = new Vector<Course>();
+            Vector<Course> filteredCourses = new Vector<Course>();
 
             // Clone the whole given list of course (will also clone sections and slots)
             for (Course course : courses) {
@@ -347,7 +347,7 @@ class Filter {
                 final boolean matchCCFilter = course.getCC();
 
                 final boolean haveExFilter = filters.get(NOEX);
-                final boolean matchExFilter = !(course.getExclusion().isEmpty());
+                final boolean matchExFilter = (course.getExclusion() != null);
 
                 final boolean containsSections = filterSections(course);
 
