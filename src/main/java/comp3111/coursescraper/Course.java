@@ -42,7 +42,6 @@ public class Course {
 		c.title = this.title;
 		c.description = this.description;
 		c.exclusion = this.exclusion;
-		c.numSections = this.numSections;
 		c.isCommonCore = this.isCommonCore;
 
 		for (int i = 0; i < numSections; i++) {
