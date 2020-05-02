@@ -246,10 +246,11 @@ class Filter {
             }
 
             /**
-             * CNF, added a duplicated case which will never happened 
-             * (checked already), but can make the expression more simplify
+             * CNF: (!A+B)(!C+D)
+             * Added a case which will never happened as checked already (!A!C), 
+             * but can make the expression more simplify
              */
-            if ((!haveTimeFilters || matchTime(slots)) && (!haveDayFilters || matchDay(slots))) {
+            if ((!haveTimeFilters() || matchTime(slots)) && (!haveDayFilters() || matchDay(slots))) {
                 section.setSlots(slots);
                 section.setNumSlots(slots.size());
                 return true;
@@ -273,16 +274,12 @@ class Filter {
 
         for (int i = 0; i < course.getNumSections(); i++) {
             Section section = course.getSection(i);
-
-            final boolean haveLabTutFilter = filters.get(LABTUT);
-            final boolean matchLabTutFilter = matchLabTut(section);
-            final boolean containsSlots = filterSlots(section);
-
-            // CNF
-            if ((!haveLabTutFilter || matchLabTutFilter) && containsSlots) {
+            // CNF: (!A+B)(C)
+            if ((!filters.get(LABTUT) || matchLabTut(section)) && filterSlots(section)) {
                 filteredSections.add(section);
             }
         }
+
         if (!filteredSections.isEmpty()) {
             course.setSections(filteredSections);
             course.setNumSections(filteredSections.size());
@@ -294,7 +291,9 @@ class Filter {
 
     /**
      * Filter the course according to the selected filters
+     * 
      * @param courses a list of unfiltered courses
+     * 
      * @return a list of filtered courses
      */
     public static List<Course> filterCourses(List<Course> courses) {
@@ -322,16 +321,8 @@ class Filter {
              */
 
             for (Course course : unfilteredCourses) {
-                final boolean haveCCFilter = filters.get(CC);
-                final boolean matchCCFilter = course.getCC();
-
-                final boolean haveExFilter = filters.get(NOEX);
-                final boolean matchExFilter = (course.getExclusion() != null);
-
-                final boolean containsSections = filterSections(course);
-
-                // CNF
-                if ((!haveCCFilter || matchCCFilter) && (!haveExFilter || matchExFilter) && containsSections) {
+                // CNF: (!A+B)(!C+D)(E)
+                if ((!filters.get(CC) || course.getCC()) && (!filters.get(NOEX) || (course.getExclusion() != null)) && filterSections(course)) {
                     filteredCourses.add(course);
                 }
             }
@@ -341,6 +332,7 @@ class Filter {
 
     /**
      * Get a debug message which contains the information of all filterse
+     * 
      * @return information of all filters
      */
     public static String getDebugMessage() {
