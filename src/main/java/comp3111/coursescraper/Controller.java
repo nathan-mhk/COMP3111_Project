@@ -75,6 +75,9 @@ public class Controller {
 	private AnchorPane anchorPaneFilter;
     
 	private Scraper scraper = new Scraper();
+
+	private boolean isFiltering = false;
+
 	private List<Course> unfilteredCourses = Collections.emptyList();
 	private List<Course> filteredCourses = Collections.emptyList();
 	private List<Course> enrolledCourses = Collections.emptyList();
@@ -185,12 +188,19 @@ public class Controller {
     		noThreeTenInstructors += i + "\n";
     	}
     	
-    	// combine the outputs and return
-    	String sectionCountOutput = "Total Number of Different sections in this search: " + sectionCount + "\n";
-    	String courseCountOutput = "Total Number of Courses in this search: " + courseCount + "\n";
-    	String instructorListOutput = "Instructors who has teaching assignment this term but does not need to teach at Tu 3:10pm: \n" + noThreeTenInstructors + "\n";
-    	String consoleOutputResult = courseCountOutput + sectionCountOutput + instructorListOutput + catalogOutput;
-    	
+		// combine the outputs and return
+		String consoleOutputResult = "";
+
+		if (!isFiltering) {
+			String sectionCountOutput = "Total Number of Different sections in this search: " + sectionCount + "\n";
+    		String courseCountOutput = "Total Number of Courses in this search: " + courseCount + "\n";
+    		String instructorListOutput = "Instructors who has teaching assignment this term but does not need to teach at Tu 3:10pm: \n" + noThreeTenInstructors + "\n";
+    		consoleOutputResult = courseCountOutput + sectionCountOutput + instructorListOutput + catalogOutput;
+		} else {
+			String filterResultCountOutput = "Number of courses from search that matches the filters: " + courseCount + "\n";
+			consoleOutputResult = filterResultCountOutput + catalogOutput;
+		}
+
     	return consoleOutputResult; 
     }
 
@@ -209,33 +219,20 @@ public class Controller {
 		textAreaConsole.setText(generateConsoleOutput(courses));
 	}
 
-	/**
-	 * @return true if any filter is applied, else false
-	 */
-	private boolean containFilters() {
-		for (Node node : anchorPaneFilter.getChildren()) {
-			if (node instanceof CheckBox) {
-				if (((CheckBox) node).isSelected()) {
-					return true;
-				}
-			}
-		}
-		return false;
-	}
-
 	private void fetch() {
 		// scrape using scraper and set the console output
-		if (containFilters()) {
+		if (!isFiltering) {
+			setConsoleOutput(getListOfCourse());
+		} else {
 			// textAreaConsole.setText(Filter.getDebugMessage());
 			filteredCourses = Filter.filterCourses(getListOfCourse());
 			setConsoleOutput(filteredCourses);
-		} else {
-			setConsoleOutput(getListOfCourse());
 		}
 	}
 
     @FXML
     void search() {
+		isFiltering = false;
 		// Reset the unfiltered course
 		unfilteredCourses = Collections.emptyList();
 
@@ -251,6 +248,8 @@ public class Controller {
 	 */
 	@FXML
 	void checkFilters(ActionEvent event) {
+		isFiltering = true;
+		
 		if (event.getSource() instanceof Button) {
 			Button btn = (Button) event.getSource();
 

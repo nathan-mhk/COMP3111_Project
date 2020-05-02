@@ -301,7 +301,6 @@ class Filter {
             return courses;
         } else {
             Vector<Course> unfilteredCourses = new Vector<Course>();
-            Vector<Course> filteredCourses = new Vector<Course>();
 
             // Clone the whole given list of course (will also clone sections and slots)
             for (Course course : courses) {
@@ -320,6 +319,8 @@ class Filter {
              * 3. Contains valid sections
              */
 
+            Vector<Course> filteredCourses = new Vector<Course>();
+            
             for (Course course : unfilteredCourses) {
                 // CNF: (!A+B)(!C+D)(E)
                 if ((!filters.get(CC) || course.getCC()) && (!filters.get(NOEX) || (course.getExclusion() != null)) && filterSections(course)) {
