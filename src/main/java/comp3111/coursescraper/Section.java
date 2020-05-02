@@ -139,4 +139,12 @@ public class Section {
 	public int getNumSlots() {
 		return numSlots;
 	}
+
+	/**
+	 * This function setup the number of slots in this section
+	 * @param numSlots This is the number of slots to be set
+	 */
+	public void setNumSlots(int numSlots) {
+		this.numSlots = numSlots;
+	}
 }
