@@ -32,9 +32,6 @@ class Filter {
 
     private static boolean all = false;
 
-    private static List<Course> unfilteredCourses = Collections.emptyList();
-    private static List<Course> filteredCourses = Collections.emptyList();
-
     /**
      * Toggle all checkboxes at once
      * 
@@ -218,11 +215,12 @@ class Filter {
      * A slot is valid only if it: <br>
      * 1. Matches time filters if they are applied <br>
      * 2. Matches day filters if they are applied <br>
+     * 
      * @param section the section to be checked
-     * @return true if the given section have slots that fulfills the slot filters
-     * and have been successfully added to the given section. Or there are no slot filters applied
+     * @return true if section contains valid sections
      */
     private static boolean filterSlots(Section section) {
+        // FIXME: Overhaul?
         List<Slot> slots = section.getSlots();
 
         boolean haveTimeFilters = haveTimeFilters();
@@ -290,7 +288,7 @@ class Filter {
      * 2. Contains valid slots <br>
      * 
      * @param course the course to be checked
-     * @return true if the course contains sections that fulfills the filters
+     * @return true if course contains valid sections
      */
     private static boolean filterSections(Course course) {
         List<Section> filteredSections = Collections.emptyList();
@@ -320,11 +318,16 @@ class Filter {
      * @return a list of filtered courses
      */
     public static List<Course> filterCourses(List<Course> courses) {
-        unfilteredCourses = courses;
-
         if (!haveFilters()) {
-            filteredCourses = unfilteredCourses;
+            return courses;
         } else {
+            List<Course> unfilteredCourses = Collections.emptyList();
+            List<Course> filteredCourses = Collections.emptyList();
+
+            // Clone the whole given list of course (will also clone sections and slots)
+            for (Course course : courses) {
+                unfilteredCourses.add(course.clone());
+            }
             /**
              * 3 layers filtering:
              * 1. Course
@@ -353,16 +356,8 @@ class Filter {
                     filteredCourses.add(course);
                 }
             }
+            return filteredCourses;
         }
-        return filteredCourses;
-    }
-
-    /**
-     * Reset the stored unfiltered courses and filtered courses
-     */
-    public static void clear() {
-        unfilteredCourses.clear();
-        filteredCourses.clear();
     }
 
     /**

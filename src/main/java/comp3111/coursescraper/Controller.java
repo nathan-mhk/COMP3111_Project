@@ -238,7 +238,6 @@ public class Controller {
     void search() {
 		// Reset the unfiltered course
 		unfilteredCourses.clear();
-		Filter.clear();
 
     	// check if the URL is valid
     	if(!isMainURLValid()) {
