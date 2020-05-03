@@ -18,7 +18,6 @@ import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 import javafx.fxml.FXMLLoader;
 
-
 public class FxTest extends ApplicationTest {
 
 	private Scene s;
@@ -43,5 +42,8 @@ public class FxTest extends ApplicationTest {
 		Button b = (Button)s.lookup("#buttonInstructorSfq");
 		sleep(1000);
 		assertTrue(b.isDisabled());
+		
+		clickOn("#tabMain");
+		clickOn("#buttonSearch");
 	}
 }
