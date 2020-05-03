@@ -278,4 +278,40 @@ public class Controller {
 		// Update the search result
 		fetch();
 	}
+	
+	/**
+	 * This function update the course timetable
+	 */
+	void updateTimetable() {
+		AnchorPane ap = (AnchorPane)tabTimetable.getContent();
+        
+        for (int i = 9; i < 23 ; i+=2) {
+        	Random random = new Random();
+        	int red = random.nextInt(255);
+            int green = random.nextInt(255);
+            int blue = random.nextInt(255);
+            double opacity = 0.0;
+            while (opacity < 0.5 || opacity > 0.8)
+            	opacity = random.nextDouble();
+            Color randomColor = Color.rgb(red, green, blue, opacity);
+        	
+        	String title = "Time " + i;
+        	Label randomLabel = new Label(title);
+        	
+        	/*
+        	 * Y: Each half hour is size 10 at Y axis
+        	 * Y: 0900 starts at 40 ---> 2200 starts at 300
+        	 * X: Each day is 100, so Mo => 100, Tu => 200 ...
+        	 */
+
+        	randomLabel.setBackground(new Background(new BackgroundFill(randomColor, CornerRadii.EMPTY, Insets.EMPTY)));
+        	randomLabel.setLayoutX(300.0);
+        	randomLabel.setLayoutY(i * 20 - 140);
+        	randomLabel.setMinWidth(100.0);
+        	randomLabel.setMaxWidth(100.0);
+        	randomLabel.setMinHeight(50);
+        	randomLabel.setMaxHeight(50);
+        	ap.getChildren().addAll(randomLabel);
+        }
+	}
 }
