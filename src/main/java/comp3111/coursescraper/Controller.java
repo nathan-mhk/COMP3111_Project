@@ -291,6 +291,7 @@ public class Controller {
 	}
 
 	private void displayList() {
+		listEntries.clear();
 		setTableCol();
 		setListEntries(enrolledCourses);
 		setListEntries(getNotEnrolledCourses());

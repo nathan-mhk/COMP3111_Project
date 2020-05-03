@@ -38,7 +38,7 @@ public class ListEntry {
         courseName = new SimpleStringProperty(temp[index].trim());
 
         lectureSection = new SimpleStringProperty(section.getCode());
-        instructor = new SimpleStringProperty(section.getInstructor().replaceAll("\\n",", "));
+        instructor = new SimpleStringProperty(section.getInstructor());
         enrolled = section.isEnrolled();
 
         this.course = course;
