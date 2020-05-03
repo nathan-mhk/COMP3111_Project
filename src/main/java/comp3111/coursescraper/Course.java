@@ -33,6 +33,24 @@ public class Course {
 	}
 
 	/**
+	 * This function duplicates a Course object
+	 * @return This return the cloned Course
+	 */
+	@Override
+	public Course clone() {
+		Course c = new Course();
+		c.title = this.title;
+		c.description = this.description;
+		c.exclusion = this.exclusion;
+		c.isCommonCore = this.isCommonCore;
+
+		for (int i = 0; i < numSections; i++) {
+			c.addSection(this.getSection(i));
+		}
+		return c;
+	}
+
+	/**
 	 * This function return the course title
 	 * @return the title
 	 */
