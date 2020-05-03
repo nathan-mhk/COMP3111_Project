@@ -1,5 +1,7 @@
 package comp3111.coursescraper;
 
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.Node;
@@ -9,7 +11,10 @@ import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.ProgressBar;
 import javafx.scene.control.Tab;
+import javafx.scene.control.TableColumn;
+import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
+import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.control.TextArea;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.Background;
@@ -73,6 +78,24 @@ public class Controller {
 	
 	@FXML
 	private AnchorPane anchorPaneFilter;
+	
+	@FXML
+	private TableView<ListEntry> tableViewList;
+	
+	@FXML
+	private TableColumn<ListEntry, String> courseCodeCol;
+	
+	@FXML
+	private TableColumn<ListEntry, String> sectionCol;
+	
+	@FXML
+	private TableColumn<ListEntry, String> courseNameCol;
+	
+	@FXML
+	private TableColumn<ListEntry, String> instructorCol;
+	
+	@FXML
+	private TableColumn<ListEntry, String> enrollCol;
     
 	private Scraper scraper = new Scraper();
 
@@ -81,6 +104,8 @@ public class Controller {
 	private List<Course> unfilteredCourses = Collections.emptyList();
 	private List<Course> filteredCourses = Collections.emptyList();
 	private Vector<Course> enrolledCourses = new Vector<Course>();
+
+	private ObservableList<ListEntry> listEntries = FXCollections.observableArrayList();
     
     @FXML
     void allSubjectSearch() {
@@ -219,6 +244,64 @@ public class Controller {
 		textAreaConsole.setText(generateConsoleOutput(courses));
 	}
 
+	// TODO
+	private void setTableCol() {
+		courseCodeCol.setCellValueFactory(new PropertyValueFactory<>("courseCode"));
+		sectionCol.setCellValueFactory(new PropertyValueFactory<>("lectureSection"));
+		courseNameCol.setCellValueFactory(new PropertyValueFactory<>("courseName"));
+		instructorCol.setCellValueFactory(new PropertyValueFactory<>("instructor"));
+	}
+
+	// Get a list of course that have all sections not enrolled
+	private List<Course> getNotEnrolledCourses() {
+		Vector<Course> notEnrolled = new Vector<Course>();
+
+		for (Course course : filteredCourses) {
+			
+			Vector<Section> notEnrolledSections = new Vector<Section>();
+
+			for (int i = 0; i < course.getNumSections(); ++i) {
+				Section section = course.getSection(i);
+
+				if (!section.isEnrolled()) {
+					notEnrolledSections.add(section);
+				}
+			}
+			// If contains unenrolled sections
+			if (!notEnrolledSections.isEmpty()) {
+				course.setSections(notEnrolledSections);
+				course.setNumSections(notEnrolledSections.size());
+
+				notEnrolled.add(course);
+			}
+		}
+
+		return notEnrolled;
+	}
+
+	// Create a list of listEntries, set it to displaying courses
+	private void setListEntries(List<Course> courses) {
+		for (Course course : courses) {
+			for (int i = 0; i < course.getNumSections(); ++i) {
+				Section section = course.getSection(i);
+
+				listEntries.add(new ListEntry(course, section));
+			}
+		}
+	}
+
+	private void displayList() {
+		setTableCol();
+		setListEntries(enrolledCourses);
+		setListEntries(getNotEnrolledCourses());
+
+		if (listEntries.isEmpty()) {
+			tableViewList.setPlaceholder(new Label("No courses to display"));
+		} else {
+			tableViewList.setItems(listEntries);
+		}
+	}
+
 	private void fetch() {
 		// scrape using scraper and set the console output
 		if (!isFiltering) {
@@ -227,6 +310,7 @@ public class Controller {
 			// textAreaConsole.setText(Filter.getDebugMessage());
 			filteredCourses = Filter.filterCourses(getListOfCourse());
 			setConsoleOutput(filteredCourses);
+			displayList();
 		}
 	}
 
