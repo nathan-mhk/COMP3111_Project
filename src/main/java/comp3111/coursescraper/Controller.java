@@ -80,7 +80,7 @@ public class Controller {
 
 	private List<Course> unfilteredCourses = Collections.emptyList();
 	private List<Course> filteredCourses = Collections.emptyList();
-	private List<Course> enrolledCourses = Collections.emptyList();
+	private Vector<Course> enrolledCourses = new Vector<Course>();
     
     @FXML
     void allSubjectSearch() {
