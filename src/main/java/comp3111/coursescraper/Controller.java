@@ -14,6 +14,7 @@ import javafx.scene.control.Tab;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
+import javafx.scene.control.cell.CheckBoxTableCell;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.control.TextArea;
 import javafx.scene.layout.AnchorPane;
@@ -95,15 +96,16 @@ public class Controller {
 	private TableColumn<ListEntry, String> instructorCol;
 	
 	@FXML
-	private TableColumn<ListEntry, String> enrollCol;
+	private TableColumn<ListEntry, Boolean> enrollCol;
     
 	private Scraper scraper = new Scraper();
 
 	private boolean isFiltering = false;
+	private boolean init = true;
 
 	private List<Course> unfilteredCourses = Collections.emptyList();
 	private List<Course> filteredCourses = Collections.emptyList();
-	private Vector<Course> enrolledCourses = new Vector<Course>();
+	private List<Course> enrolledCourses = Collections.emptyList();
 
 	private ObservableList<ListEntry> listEntries = FXCollections.observableArrayList();
     
@@ -244,39 +246,53 @@ public class Controller {
 		textAreaConsole.setText(generateConsoleOutput(courses));
 	}
 
-	// TODO
-	private void setTableCol() {
+	/**
+	 * UI initialization
+	 * Set up the TableColumns inside tableViewList
+	 */
+	private void setUpTableView() {
 		courseCodeCol.setCellValueFactory(new PropertyValueFactory<>("courseCode"));
 		sectionCol.setCellValueFactory(new PropertyValueFactory<>("lectureSection"));
 		courseNameCol.setCellValueFactory(new PropertyValueFactory<>("courseName"));
 		instructorCol.setCellValueFactory(new PropertyValueFactory<>("instructor"));
+		
+		enrollCol.setCellValueFactory(new PropertyValueFactory<>("enrolled"));
+		enrollCol.setCellFactory(tc -> new CheckBoxTableCell<>());
+
+		tableViewList.setItems(listEntries);
 	}
 
-	// Get a list of course that have all sections not enrolled
-	private List<Course> getNotEnrolledCourses() {
-		Vector<Course> notEnrolled = new Vector<Course>();
+	/**
+	 * Get a list of enrolled/unenrolled courses
+	 * 
+	 * @param enrolledCourses true if want to get a list of enrolled courses, 
+	 * false if want to get a list of unenrolled courses
+	 * 
+	 * @return a list of enrolled/unenrolled courses
+	 */
+	private List<Course> getCourses(boolean enrolledCourses) {
+		Vector<Course> resultCourses = new Vector<Course>();
 
 		for (Course course : filteredCourses) {
-			
-			Vector<Section> notEnrolledSections = new Vector<Section>();
+
+			Vector<Section> resultSections = new Vector<Section>();
 
 			for (int i = 0; i < course.getNumSections(); ++i) {
 				Section section = course.getSection(i);
 
-				if (!section.isEnrolled()) {
-					notEnrolledSections.add(section);
+				// ANF: !(A^B)
+				if (!(enrolledCourses ^ section.isEnrolled())) {
+					resultSections.add(section.clone());
 				}
 			}
-			// If contains unenrolled sections
-			if (!notEnrolledSections.isEmpty()) {
-				course.setSections(notEnrolledSections);
-				course.setNumSections(notEnrolledSections.size());
-
-				notEnrolled.add(course);
+			if (!resultSections.isEmpty()) {
+				Course targetCourse = course.clone();
+				targetCourse.setSections(resultSections);
+				targetCourse.setNumSections(resultSections.size());
+				resultCourses.add(targetCourse);
 			}
 		}
-
-		return notEnrolled;
+		return resultCourses;
 	}
 
 	// Create a list of listEntries, set it to displaying courses
@@ -291,15 +307,21 @@ public class Controller {
 	}
 
 	private void displayList() {
+		if (init) {
+			setUpTableView();
+			init = false;
+		}
+		// Reset
 		listEntries.clear();
-		setTableCol();
+		enrolledCourses.clear();
+
+		enrolledCourses = getCourses(true);
+
 		setListEntries(enrolledCourses);
-		setListEntries(getNotEnrolledCourses());
+		setListEntries(getCourses(false));
 
 		if (listEntries.isEmpty()) {
 			tableViewList.setPlaceholder(new Label("No courses to display"));
-		} else {
-			tableViewList.setItems(listEntries);
 		}
 	}
 

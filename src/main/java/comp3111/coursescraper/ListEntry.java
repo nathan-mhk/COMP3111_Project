@@ -2,6 +2,8 @@ package comp3111.coursescraper;
 
 import java.util.*;
 
+import javafx.beans.property.BooleanProperty;
+import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
 
@@ -20,7 +22,7 @@ public class ListEntry {
     private StringProperty courseName;
     private StringProperty instructor;
 
-    private boolean enrolled;
+    private BooleanProperty enrolled;
 
     // The course that this entry belongs to
     private Course course;
@@ -32,14 +34,14 @@ public class ListEntry {
         final int courseNameIndex = index + 1;
 
         String[] temp = course.getTitle().split("-");
-        courseCode = new SimpleStringProperty(temp[index].trim());
+        this.courseCode = new SimpleStringProperty(temp[index].trim());
 
         temp = temp[courseNameIndex].split("\\(");
-        courseName = new SimpleStringProperty(temp[index].trim());
+        this.courseName = new SimpleStringProperty(temp[index].trim());
 
-        lectureSection = new SimpleStringProperty(section.getCode());
-        instructor = new SimpleStringProperty(section.getInstructor());
-        enrolled = section.isEnrolled();
+        this.lectureSection = new SimpleStringProperty(section.getCode());
+        this.instructor = new SimpleStringProperty(section.getInstructor());
+        this.enrolled = new SimpleBooleanProperty(section.isEnrolled());
 
         this.course = course;
         this.section = section;
@@ -69,12 +71,12 @@ public class ListEntry {
         return section;
     }
 
-    public boolean isEnrolled() {
-        return enrolled;
+    public boolean getEnrolled() {
+        return enrolled.get();
     }
 
-    public void enrollSection() {
-        enrolled = true;
+    public void setEnrolled(boolean enrolled) {
+        this.enrolled.set(enrolled);
         section.setEnrollStatus(enrolled);
     }
 }
