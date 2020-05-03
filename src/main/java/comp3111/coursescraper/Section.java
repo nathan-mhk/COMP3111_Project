@@ -20,6 +20,7 @@ public class Section {
 	private String sectionInstructor; // May be multiple instructors separated with '\n'
 	private List<Slot> slots;
 	private int numSlots;
+	private boolean enrolled;
 	
 	/**
 	 * This is the contructor of the Section class. It initializes
@@ -30,6 +31,7 @@ public class Section {
 		for (int i = 0; i < DEFAULT_MAX_SLOT; i++)
 			slots.set(i, null);
 		numSlots = 0;
+		enrolled = false;
 	}
 	
 	/**
@@ -146,5 +148,13 @@ public class Section {
 	 */
 	public void setNumSlots(int numSlots) {
 		this.numSlots = numSlots;
+	}
+
+	public boolean isEnrolled() {
+		return enrolled;
+	}
+
+	public void setEnrollStatus(boolean enrolled) {
+		this.enrolled = enrolled;
 	}
 }
