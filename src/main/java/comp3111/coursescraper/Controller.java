@@ -81,6 +81,7 @@ public class Controller {
 	private List<Course> unfilteredCourses = Collections.emptyList();
 	private List<Course> filteredCourses = Collections.emptyList();
 	private Vector<Course> enrolledCourses = new Vector<Course>();
+	private Vector<Label> enrolledSlots = new Vector<Label>();
     
     @FXML
     void allSubjectSearch() {
@@ -158,6 +159,15 @@ public class Controller {
     			// add all new instructors to the list
     			String [] secInstructor = sec.getInstructor().split("\n");
     			addStringFromArrayToList(allInstructors, secInstructor);
+    			
+    			// enroll to some random course
+//    			Random random = new Random();
+//    			if (random.nextDouble() > 0.97) {
+//    				sec.setEnrollStatus(true);
+//    				enrolledCourses.add(c);
+//    				newline += "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! Enrolled !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!\n";
+//    				updateTimetable();
+//    			}
     			
     			// loop all slots in this section
     			for (int j = 0; j < sec.getNumSlots(); ) {
@@ -284,34 +294,61 @@ public class Controller {
 	 */
 	void updateTimetable() {
 		AnchorPane ap = (AnchorPane)tabTimetable.getContent();
-        
-        for (int i = 9; i < 23 ; i+=2) {
-        	Random random = new Random();
-        	int red = random.nextInt(255);
-            int green = random.nextInt(255);
-            int blue = random.nextInt(255);
-            double opacity = 0.0;
-            while (opacity < 0.5 || opacity > 0.8)
-            	opacity = random.nextDouble();
-            Color randomColor = Color.rgb(red, green, blue, opacity);
-        	
-        	String title = "Time " + i;
-        	Label randomLabel = new Label(title);
-        	
-        	/*
-        	 * Y: Each half hour is size 10 at Y axis
-        	 * Y: 0900 starts at 40 ---> 2200 starts at 300
-        	 * X: Each day is 100, so Mo => 100, Tu => 200 ...
-        	 */
-
-        	randomLabel.setBackground(new Background(new BackgroundFill(randomColor, CornerRadii.EMPTY, Insets.EMPTY)));
-        	randomLabel.setLayoutX(300.0);
-        	randomLabel.setLayoutY(i * 20 - 140);
-        	randomLabel.setMinWidth(100.0);
-        	randomLabel.setMaxWidth(100.0);
-        	randomLabel.setMinHeight(50);
-        	randomLabel.setMaxHeight(50);
-        	ap.getChildren().addAll(randomLabel);
-        }
+		// remove the old slots
+		for (int i = 0; i < enrolledSlots.size(); i++)
+			ap.getChildren().remove(enrolledSlots.get(i));
+		enrolledSlots.clear();
+		
+		// for all courses in the list of enrolled courses
+		for (int i = 0; i < enrolledCourses.size(); i++) {
+			Course c = enrolledCourses.get(i);
+			
+			// for all sections in this courses
+			for (int j = 0; j < c.getNumSections(); j++) {
+				Section sec = c.getSection(j);
+				
+				// find the enrolled section(s)
+				if (sec.isEnrolled()) {
+					
+					// pick a colour for this enrolled section
+					Random random = new Random();
+					int red = random.nextInt(255);
+			        int green = random.nextInt(255);
+			        int blue = random.nextInt(255);
+			        double opacity = 0.5;
+		            Color randomColor = Color.rgb(red, green, blue, opacity);
+					
+		            // for all slots in this section
+					for (int k = 0; k < sec.getNumSlots(); k++) {
+						Slot s = sec.getSlot(k);
+						
+			        	String [] cTitle = c.getTitle().split("-");
+			            String title = cTitle[0] + "\n" + sec.getCode();
+			        	Label randomLabel = new Label(title);
+			        	
+			        	double start = (double)s.getStartHour() * 20 - 140 + (double)s.getStartMinute() / 30 * 10;
+			        	double end = (double)s.getEndHour() * 20 - 140 + (double)s.getEndMinute() / 30 * 10;
+			        	double length = end - start;
+			        	double day = (double)s.getDay() + 1;
+			        	day *= 100;
+			        	
+			        	/*
+			        	 * Y: Each half hour is size 10 at Y axis
+			        	 * Y: 0900 starts at 40 ---> 2200 starts at 300
+			        	 * X: Each day is 100, so Mo => 100, Tu => 200 ...
+			        	 */
+			        	randomLabel.setBackground(new Background(new BackgroundFill(randomColor, CornerRadii.EMPTY, Insets.EMPTY)));
+			        	randomLabel.setLayoutX(day);
+			        	randomLabel.setLayoutY(start);
+			        	randomLabel.setMinWidth(100.0);
+			        	randomLabel.setMaxWidth(100.0);
+			        	randomLabel.setMinHeight(length);
+			        	randomLabel.setMaxHeight(length);
+			        	ap.getChildren().addAll(randomLabel);
+			        	enrolledSlots.add(randomLabel);
+					}
+				}
+			}
+		}
 	}
 }
