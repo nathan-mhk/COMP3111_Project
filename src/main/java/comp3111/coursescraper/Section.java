@@ -157,4 +157,36 @@ public class Section {
 	public void setEnrollStatus(boolean enrolled) {
 		this.enrolled = enrolled;
 	}
+
+	/**
+	 * Two sections are considered equals even if their slots are not equal
+	 * 
+	 * @param obj the target section
+	 * 
+	 * @return true if source section equals target section
+	 */
+	public boolean equals(Object obj) {
+		if (obj == null) {
+            return false;
+		}
+		if (!Section.class.isAssignableFrom(obj.getClass())) {
+			return false;
+		}
+
+		final Section s = (Section) obj;
+
+		if (sectionID != s.sectionID) {
+			return false;
+		}
+		if (!sectionCode.equals(s.sectionCode)) {
+			return false;
+		}
+		if (!sectionInstructor.equals(s.sectionInstructor)) {
+			return false;
+		}
+		if (enrolled != s.enrolled) {
+			return false;
+		}
+		return true;
+	}
 }

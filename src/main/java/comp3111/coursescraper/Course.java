@@ -175,4 +175,36 @@ public class Course {
 	public void setCC(boolean state) {
 		this.isCommonCore = state;
 	}
+
+	/**
+	 * Two courses are considered equals even if their sections are not equal
+	 * 
+	 * @param obj the target course
+	 * 
+	 * @return true if source course equals target course
+	 */
+	public boolean equals(Object obj) {
+		if (obj == null) {
+            return false;
+		}
+		if (!Course.class.isAssignableFrom(obj.getClass())) {
+			return false;
+		}
+
+		final Course c = (Course) obj;
+
+		if (!title.equals(c.title)) {
+			return false;
+		}
+		if (!description.equals(c.description)) {
+			return false;
+		}
+		if (!exclusion.equals(c.exclusion)) {
+			return false;
+		}
+		if (isCommonCore != c.isCommonCore) {
+			return false;
+		}
+		return true;
+	}
 }

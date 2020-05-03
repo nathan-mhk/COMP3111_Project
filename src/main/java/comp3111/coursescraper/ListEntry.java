@@ -8,14 +8,12 @@ import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
 
 /**
- * An entry to the tableview inside List tab
+ * Data model class for tableview entries inside List tab
  * Must be public, otherwise will get IllegalAccessException
  * 
  * @author Nathan
  */
 public class ListEntry {
-
-    // course title: COMP 3111 - Software Engineering (4 units)
 
     private StringProperty courseCode;
     private StringProperty lectureSection;
@@ -29,7 +27,11 @@ public class ListEntry {
     // The section that this entry belongs to
     private Section section;
 
-    public ListEntry(Course course, Section section) {
+    // Delegate
+    private static Controller ctrl = null;
+
+
+    public ListEntry(Course course, Section section, Controller controller) {
         final int index = 0;
         final int courseNameIndex = index + 1;
 
@@ -45,6 +47,14 @@ public class ListEntry {
 
         this.course = course;
         this.section = section;
+
+        if (ctrl == null) {
+            ctrl = controller;
+        }
+
+        enrolled.addListener((observable, oldValue, newValue) -> {
+            setEnrolled(newValue);
+        });
     }
 
     public String getCourseCode() {
@@ -67,7 +77,7 @@ public class ListEntry {
         return course;
     }
 
-    public Section getCorrespondingCSection() {
+    public Section getCorrespondingSection() {
         return section;
     }
 
@@ -75,8 +85,22 @@ public class ListEntry {
         return enrolled.get();
     }
 
+    public BooleanProperty enrolledProperty() {
+        return enrolled;
+    }
+
+    //DEBUG Do I need this?
+    // This method is called manually
     public void setEnrolled(boolean enrolled) {
+        System.out.println(course.getTitle() + "\n" + section.getCode() + " : " + enrolled);    //REMOVEME
+
         this.enrolled.set(enrolled);
         section.setEnrollStatus(enrolled);
+
+        ctrl.updateEnrolledCourses(course, section, enrolled);
+    }
+
+    public void debugMsg() {
+        System.out.println(course.getTitle() + "\n" + section.getCode() + " : " + enrolled);
     }
 }
