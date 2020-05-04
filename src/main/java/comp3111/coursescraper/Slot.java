@@ -140,29 +140,4 @@ public class Slot {
 	public void setDay(int day) {
 		this.day = day;
 	}
-
-	public boolean equals(Object obj) {
-		if (obj == null) {
-            return false;
-        }
-		if (!Slot.class.isAssignableFrom(obj.getClass())) {
-			return false;
-		}
-		
-		final Slot s = (Slot) obj;
-
-		if (day != s.day) {
-			return false;
-		}
-		if (!start.equals(s.start)) {
-			return false;
-		}
-		if (!end.equals(s.end)) {
-			return false;
-		}
-		if (!venue.equals(s.venue)) {
-			return false;
-		}
-		return true;
-	}
 }

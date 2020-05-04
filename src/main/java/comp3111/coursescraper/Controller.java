@@ -163,13 +163,23 @@ public class Controller {
 		}
 	}
 	
+	/**
+	 * Get a list of unfiltered courses. Scrape if does not exist.
+	 * @return A list of unfiltered coursese
+	 */
 	private List<Course> getListOfCourse() {
 		if (unfilteredCourses.isEmpty()) {
 			unfilteredCourses = scraper.scrape(textfieldURL.getText(), textfieldTerm.getText(), textfieldSubject.getText());
 		}
 		return unfilteredCourses;
 	}
-    
+	
+	/**
+	 * Generate the output for textAreaConsole
+	 * @param v List of courses that will be printed
+	 * @param type Type of console output. Can be either SEARCH, FILTER or LIST
+	 * @return A string that contains the output
+	 */
     private String generateConsoleOutput(List<Course> v, Type type) {
     	String catalogOutput = "";
     	int courseCount = 0;
@@ -249,24 +259,23 @@ public class Controller {
     	return consoleOutputResult; 
     }
 
-	private void clearConsoleOutput() {
-		textAreaConsole.setText("");
-	}
 
 	/**
-	 * Generate texts and set it to textAreaConsole
+	 * Generate texts and set it to textAreaConsole. 
+	 * Existing texts inside the console will be cleared
 	 * 
-	 * @param courses a list of courses
+	 * @param courses A list of courses
+	 * @param type The type of console output. Can be either SEARCH, FILTER or LIST
 	 */
 	private void setConsoleOutput(List<Course> courses, Type type) {
 		// reset console text
-		clearConsoleOutput();
+		textAreaConsole.setText("");
 		textAreaConsole.setText(generateConsoleOutput(courses, type));
 	}
 
 	/**
 	 * UI initialization
-	 * Set up the TableColumns inside tableViewList
+	 * Set up the TableColumns inside tableViewList and bind them to the data model
 	 */
 	private void setUpTableView() {
 		tableViewList.setPlaceholder(new Label("No courses to display"));
@@ -275,7 +284,7 @@ public class Controller {
 		sectionCol.setCellValueFactory(new PropertyValueFactory<ListEntry, String>("lectureSection"));
 		courseNameCol.setCellValueFactory(new PropertyValueFactory<ListEntry, String>("courseName"));
 		instructorCol.setCellValueFactory(new PropertyValueFactory<ListEntry, String>("instructor"));
-
+		
 		enrollCol.setCellValueFactory(new Callback<CellDataFeatures<ListEntry, Boolean>, ObservableValue<Boolean>>() {
 			@Override
 			public ObservableValue<Boolean> call(CellDataFeatures<ListEntry, Boolean> param) {
@@ -289,6 +298,10 @@ public class Controller {
 	}
 
 	/**
+	 * Update the currently enrolled courses
+	 * @param c The course that the newly enrolled/dropped section belongs to
+	 * @param s The section that is newly enrolled/dropped
+	 */
 	void updateEnrolledCourses(Course c, Section s) {
 		/**
 		 * Find if the existing course exists inside enrolledCourses
@@ -333,12 +346,11 @@ public class Controller {
 	}
 
 	/**
-	 * Get a list of unenrolled courses from filteredCourses
+	 * Get a list of unenrolled courses from filteredCourses. 
+	 * A course is considered not enrolled if it still contains unenrolled sections
 	 * 
-	 * @return a list of unenrolled courses
+	 * @return A list of unenrolled courses
 	 */
-
-	// Get a list of course that have all sections not enrolled
 	private List<Course> getNotEnrolledCourses() {
 		Vector<Course> notEnrolled = new Vector<Course>();
 
@@ -352,7 +364,7 @@ public class Controller {
 				Course enrolledCourse = enrolledCourses.get(enrolledCourses.indexOf(course));
 				List<Section> enrolledSections = enrolledCourse.getSections();
 
-				// Check if contains enrolled sections
+				// Check if the course contains enrolled sections
 				Vector<Section> notEnrolledSections = new Vector<Section>();
 
 				for (int i = 0; i < course.getNumSections(); ++i) {
@@ -360,10 +372,9 @@ public class Controller {
 
 					if (!enrolledSections.contains(section)) {
 						notEnrolledSections.add(section);
-					} else {
 					}
 				}
-				// If the course contains unenrolled sections
+				// If the course contains unenrolled sections, add the unenrolled sections and add the course
 				if (!notEnrolledSections.isEmpty()) {
 					Course c = course.clone();
 					c.setSections(notEnrolledSections);
@@ -376,8 +387,10 @@ public class Controller {
 		return notEnrolled;
 	}
 
-	// Create a list of listEntries, set it to displaying courses
+	/**
 	 * Add entries to be displayed in List tab
+	 * @param courses List of courses to be added for displaying
+	 */
 	private void addListEntries(List<Course> courses) {
 		for (Course course : courses) {
 			for (int i = 0; i < course.getNumSections(); ++i) {
@@ -389,22 +402,31 @@ public class Controller {
 		}
 	}
 
+	/**
+	 * Handle list displaying.
+	 * Update the entries to be displayed. 
+	 * Existing entries will be replaced
+	 */
 	private void displayList() {
 		if (init) {
 			setUpTableView();
 			ListEntry.setController(this);
 			init = false;
 		}
-		// Reset
+
 		listEntries.clear();
 
 		addListEntries(enrolledCourses);
 		addListEntries(getNotEnrolledCourses());
 	}
 
-	private void fetch(boolean isFiltering) {
+	/**
+	 * Fetch a list of course and display it in console
+	 * @param filtered Whether fetching filtered courses
+	 */
+	private void fetch(boolean filtered) {
 		// scrape using scraper and set the console output
-		if (!isFiltering) {
+		if (!filtered) {
 			setConsoleOutput(getListOfCourse(), Type.SEARCH);
 		} else {
 			filteredCourses = Filter.filterCourses(getListOfCourse());
@@ -413,6 +435,9 @@ public class Controller {
 		displayList();
 	}
 
+	/**
+	 * Search coursese according to the input terms and subject
+	 */
     @FXML
     void search() {
 		// Reset the unfiltered and filtered course
@@ -435,7 +460,7 @@ public class Controller {
 	}
 	
 	/**
-	 * Handling UI and setting filters only
+	 * Filtering courses according to the checked filters
 	 */
 	@FXML
 	void checkFilters(ActionEvent event) {
@@ -465,7 +490,6 @@ public class Controller {
 			Filter.check(checkBox.getText());
 		}
 
-		// Update the search result
 		fetch(true);
 	}
 }

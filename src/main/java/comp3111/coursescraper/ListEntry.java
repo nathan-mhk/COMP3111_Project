@@ -1,18 +1,17 @@
 package comp3111.coursescraper;
 
-import java.util.*;
-
-import javafx.beans.property.BooleanProperty;
-import javafx.beans.property.SimpleBooleanProperty;
-import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
+import javafx.beans.property.BooleanProperty;
+import javafx.beans.property.SimpleStringProperty;
+import javafx.beans.property.SimpleBooleanProperty;
 
 /**
- * Data model class for tableview entries inside List tab
- * Must be public, otherwise will get IllegalAccessException
+ * Data model class for entries inside List tab
  * 
  * @author Nathan
  */
+
+// Must be public, otherwise will get IllegalAccessException
 public class ListEntry {
 
     private StringProperty courseCode;
@@ -22,9 +21,7 @@ public class ListEntry {
 
     private BooleanProperty enrolled;
 
-    // The course that this entry belongs to
     private Course course;
-    // The section that this entry belongs to
     private Section section;
 
     private static Controller controller = null;
@@ -65,39 +62,75 @@ public class ListEntry {
         });
     }
 
+    /**
+     * Get the course code of the this entry
+     * 
+     * @return The course code
+     */
     public String getCourseCode() {
         return courseCode.get();
     }
 
+    /**
+     * Get the lecture section of this entry
+     * 
+     * @return The lecture section
+     */
     public String getLectureSection() {
         return lectureSection.get();
     }
 
+    /**
+     * Get the name of the course of this entry
+     * 
+     * @return The name of the course
+     */
     public String getCourseName() {
         return courseName.get();
     }
 
+    /**
+     * Get the instructors of this entry
+     * 
+     * @return The instructors
+     */
     public String getInstructor() {
         return instructor.get();
     }
 
-    public Course getCorrespondingCourse() {
+    /**
+     * Get the course of this entry
+     * 
+     * @return The course that this entry belongs to
+     */
+    public Course getCourse() {
         return course;
     }
 
-    public Section getCorrespondingSection() {
+    /**
+     * Get the section of this entry
+     * 
+     * @return The section that this entry belongs to
+     */
+    public Section getSection() {
         return section;
     }
 
+    /**
+     * Get the enrollment status of this entry
+     * 
+     * @return True if this entry is enrolled (checkbox is selected)
+     */
     public boolean getEnrolled() {
         return enrolled.get();
     }
 
+    /**
+     * Get the BooleanProperty of the checkbox of this entry
+     * 
+     * @return The BooleanProperty of this entry
+     */
     public BooleanProperty enrolledProperty() {
         return enrolled;
-    }
-
-    public void debugMsg() {
-        System.out.println(course.getTitle() + "\n" + section.getCode() + " : " + enrolled.getValue());
     }
 }

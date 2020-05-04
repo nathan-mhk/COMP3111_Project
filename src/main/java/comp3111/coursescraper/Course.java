@@ -177,12 +177,14 @@ public class Course {
 	}
 
 	/**
-	 * Two courses are considered equals even if their sections are not equal
+	 * Check if the given course equals the caller. 
+	 * Two courses are considered equal even if their sections are not equal
 	 * 
-	 * @param obj the target course
+	 * @param obj The target course
 	 * 
-	 * @return true if source course equals target course
+	 * @return True if caller course equals target course
 	 */
+	@Override
 	public boolean equals(Object obj) {
 		if (obj == null) {
             return false;

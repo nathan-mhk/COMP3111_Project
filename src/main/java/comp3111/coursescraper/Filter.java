@@ -4,7 +4,8 @@ import java.util.*;
 
 /**
  * <b>Filter helper class</b><br>
- * This class is used to handle the filtering only. <br>
+ * This class is used to handle filtering only. <br>
+ * Tracks the status of checked filters
  * 
  * @author Nathan
  */
@@ -35,7 +36,7 @@ class Filter {
     /**
      * Toggle all checkboxes at once
      * 
-     * @return the current state of all checkboxes, true == checked, false == unchecked
+     * @return The current state of all checkboxes, true == checked, false == unchecked
      */
     static boolean toggleAll() {
         all = !all;
@@ -46,7 +47,7 @@ class Filter {
     /**
      * Toggle a checkbox
      * 
-     * @param filter the text of the checkbox
+     * @param filter The text of the checkbox selected
      */
     static void check(String filter) {
         filters.replace(filter, !filters.get(filter));
@@ -55,7 +56,7 @@ class Filter {
     /**
      * Check if any filters are applied
      * 
-     * @return true if contain any filters, false if contain 0 filters
+     * @return True if have any filters, false if none
      */
     private static boolean haveFilters() {
         return filters.containsValue(true);
@@ -64,7 +65,7 @@ class Filter {
     /**
      * Check if any time filters are applied (am/pm)
      * 
-     * @return true if contain any time filters, false if none
+     * @return True if contain any time filters, false if none
      */
     private static boolean haveTimeFilters() {
         return (filters.get(AM) || filters.get(PM));
@@ -73,7 +74,7 @@ class Filter {
     /**
      * Check if any day filters are applied (mon/tue/etc)
      * 
-     * @return true if contain any days filters, false if none
+     * @return True if contain any days filters, false if none
      */
     private static boolean haveDayFilters() {
         return (filters.get(MON) || filters.get(TUE) || filters.get(WED) || filters.get(THU) || filters.get(FRI) || filters.get(SAT));
@@ -82,7 +83,7 @@ class Filter {
     /**
      * Get a list of applied day fitlers 
      * 
-     * @return a list of applied day filters
+     * @return A list of applied day filters
      */
     private static Vector<String> getDayFilters() {
         Vector<String> dayFilters = new Vector<String>();
@@ -112,9 +113,9 @@ class Filter {
     /**
      * Check if the given slots can fulfill all applied time filters.
      * 
-     * @param slots slots to be checked
+     * @param slots Slots to be checked
      * 
-     * @return true if there are slots inside the given list that 
+     * @return True if there are slots inside the given list that 
      * together can fulfill all applied time filters
      */
     private static boolean matchTime(Vector<Slot> slots) {
@@ -126,7 +127,6 @@ class Filter {
 
         final int middle = 12;
 
-        // Check if contain slots that matches am/pm
         for (Slot slot : slots) {
             final int startTime = slot.getStartHour();
             final int endTime = slot.getEndHour();
@@ -141,16 +141,16 @@ class Filter {
                 break;
             }
         }
-
+        // CNF: (!A+B)(A+C)(!C+D)
         return ((!haveAM || matchAM) && (haveAM || havePM) && (!havePM || matchPM));
     }
 
     /**
      * Check if the given slots can fulfill all applied day filters.
      * 
-     * @param slots slots to be checked
+     * @param slots Slots to be checked
      * 
-     * @return true if there are slots inside the given list that 
+     * @return True if there are slots inside the given list that 
      * together can fulfill all applied day filters
      */
     private static boolean matchDay(Vector<Slot> slots) {
@@ -178,9 +178,9 @@ class Filter {
     /**
      * Check if the given section is a lab or tutorial
      * 
-     * @param section the section to be checked
+     * @param section The section to be checked
      * 
-     * @return true if section is a lab or tutorial
+     * @return True if section is a lab or tutorial
      */
     private static boolean matchLabTut(Section section) {
         String sectionCode = section.getCode();
@@ -196,12 +196,12 @@ class Filter {
     /**
      * Check if the given section contains valid slots. <br><br>
      * All slots are considered valid if they: <br>
-     * 1. Contain matches time filters if they are applied <br>
+     * 1. Contain slots that matche time filters if they are applied <br>
      * 2. Contains slots that match day filters if they are applied <br>
      * 
-     * @param section the section to be checked
+     * @param section The section to be checked
      * 
-     * @return true if section contains valid sections or 
+     * @return True if section contains valid slots or 
      * no time and day filters are applied
      */
     private static boolean filterSlots(Section section) {
@@ -220,8 +220,7 @@ class Filter {
 
             /**
              * CNF: (!A+B)(!C+D) 
-             * Added (!A!C), which is impossible as checked already, 
-             * but can simplifies the expression
+             * Added (!A!C), which is impossible as checked already, but can simplifies the expression
              */
             return ((!haveTimeFilters || matchTime(slots)) && (!haveDayFilters || matchDay(slots)));
         }
@@ -233,9 +232,9 @@ class Filter {
      * 1. One of the section matches lab & tut filter if it is applied <br>
      * 2. One of the section contains valid slots <br>
      * 
-     * @param course the course to be checked
+     * @param course The course to be checked
      * 
-     * @return true if course contains valid sections
+     * @return True if course contains valid sections
      */
     private static boolean filterSections(Course course) {
         final boolean haveLabTutFilters = filters.get(LABTUT);
@@ -286,9 +285,9 @@ class Filter {
     /**
      * Filter the course according to the selected filters
      * 
-     * @param courses a list of unfiltered courses
+     * @param courses A list of unfiltered courses
      * 
-     * @return a list of filtered courses
+     * @return A list of filtered courses
      */
     public static List<Course> filterCourses(List<Course> courses) {
         if (!haveFilters()) {
@@ -323,19 +322,5 @@ class Filter {
             }
             return filteredCourses;
         }
-    }
-
-    /**
-     * Get a debug message which contains the information of all filterse
-     * 
-     * @return information of all filters
-     */
-    public static String getDebugMessage() {
-        StringBuilder stringBuilder = new StringBuilder();
-        
-        for (Map.Entry<String, Boolean> entry : filters.entrySet()) {
-            stringBuilder.append(entry.getKey()).append(":\t\t").append(entry.getValue()).append("\n");
-        }
-        return stringBuilder.toString();
     }
 }
