@@ -80,23 +80,6 @@ class Filter {
     }
 
     /**
-     * Get a list of applied time filters
-     * 
-     * @return a list of applied time filters
-     */
-    private static Vector<String> getTimeFilteres() {
-        Vector<String> timeFilters = new Vector<String>();
-
-        if (filters.get(AM)) {
-            timeFilters.add(AM);
-        }
-        if (filters.get(PM)) {
-            timeFilters.add(PM);
-        }
-        return timeFilters;
-    }
-
-    /**
      * Get a list of applied day fitlers 
      * 
      * @return a list of applied day filters
@@ -127,8 +110,7 @@ class Filter {
     }
 
     /**
-     * Check if the given slots can fulfill all applied time filters. 
-     * Remove slots that cannot fulfill the filters in the mean time
+     * Check if the given slots can fulfill all applied time filters.
      * 
      * @param slots slots to be checked
      * 
@@ -136,41 +118,35 @@ class Filter {
      * together can fulfill all applied time filters
      */
     private static boolean matchTime(Vector<Slot> slots) {
-        List<String> unmatchedFilters = getTimeFilteres();
-
         final boolean haveAM = filters.get(AM);
         final boolean havePM = filters.get(PM);
 
-        for (Iterator<Slot> itr = slots.iterator(); itr.hasNext();) {
-            Slot slot = itr.next();
+        boolean matchAM = false;
+        boolean matchPM = false;
 
-            final int middle = 12;
+        final int middle = 12;
+
+        // Check if contain slots that matches am/pm
+        for (Slot slot : slots) {
             final int startTime = slot.getStartHour();
             final int endTime = slot.getEndHour();
 
-            final boolean matchAM = (startTime < middle);
-            final boolean matchPM = (startTime >= middle);
-            final boolean matchBoth = (matchAM && (endTime >= middle));
-
-            if (matchAM) {
-                unmatchedFilters.remove(AM);
+            if (!matchAM) {
+                matchAM = (startTime < middle);
             }
-            if (matchPM) {
-                unmatchedFilters.remove(PM);
+            if (!matchPM) {
+                matchPM = (endTime >= middle);
             }
-            if (haveAM && havePM && matchBoth) {
-                unmatchedFilters.remove(PM);
-            }
-            if ((haveAM && !havePM && !matchAM) || (!haveAM && havePM && !matchPM)) {
-                itr.remove();
+            if (matchAM && matchPM) {
+                break;
             }
         }
-        return ((unmatchedFilters.size() == 0) && (slots.size() != 0));
+
+        return ((!haveAM || matchAM) && (haveAM || havePM) && (!havePM || matchPM));
     }
 
     /**
-     * Check if the given slots can fulfill all applied day filters. 
-     * Remove slots that cannot fulfill the filters in the mean time
+     * Check if the given slots can fulfill all applied day filters.
      * 
      * @param slots slots to be checked
      * 
@@ -184,9 +160,7 @@ class Filter {
         final int offsetStart = FILTERS_NAME.indexOf(MON);
         final int offsetEnd = FILTERS_NAME.indexOf(SAT);
 
-        for (Iterator<Slot> itr = slots.iterator(); itr.hasNext();) {
-            Slot slot = itr.next();
-
+        for (Slot slot : slots) {
             final int index = slot.getDay() + offsetStart;
 
             // In case the value get from slot.getDay() is out of bounds
@@ -195,12 +169,10 @@ class Filter {
 
                 if (dayFilters.contains(day)) {
                     unmatchedFilters.remove(day);
-                } else {
-                    itr.remove();
                 }
             }
         }
-        return ((unmatchedFilters.size() == 0) && (slots.size() != 0));
+        return unmatchedFilters.isEmpty();
     }
 
     /**
@@ -221,12 +193,11 @@ class Filter {
         return false;
     }
 
-    // FIXME: Rework required
     /**
      * Check if the given section contains valid slots. <br><br>
-     * A slot is valid if it: <br>
-     * 1. Matches time filters if they are applied <br>
-     * 2. Matches day filters if they are applied <br>
+     * All slots are considered valid if they: <br>
+     * 1. Contain matches time filters if they are applied <br>
+     * 2. Contains slots that match day filters if they are applied <br>
      * 
      * @param section the section to be checked
      * 
@@ -240,6 +211,7 @@ class Filter {
         if (!haveTimeFilters && !haveDayFilters) {
             return true;
         } else {
+
             Vector<Slot> slots = new Vector<Slot>();
 
             for (int i = 0; i < section.getNumSlots(); ++i) {
@@ -247,46 +219,67 @@ class Filter {
             }
 
             /**
-             * CNF: (!A+B)(!C+D)
-             * Added a case which will never happened as checked already (!A!C), 
-             * but can make the expression more simplify
+             * CNF: (!A+B)(!C+D) 
+             * Added (!A!C), which is impossible as checked already, 
+             * but can simplifies the expression
              */
-            if ((!haveTimeFilters() || matchTime(slots)) && (!haveDayFilters() || matchDay(slots))) {
-                section.setSlots(slots);
-                section.setNumSlots(slots.size());
-                return true;
-            }
-            return false;
+            return ((!haveTimeFilters || matchTime(slots)) && (!haveDayFilters || matchDay(slots)));
         }
     }
 
     /**
      * Check if the given course contains valid sections. <br><br>
-     * A section is considered valid only if it: <br>
-     * 1. Matches lab & tut filter if it is applied <br>
-     * 2. Contains valid slots <br>
+     * All sections are considered valid only if: <br>
+     * 1. One of the section matches lab & tut filter if it is applied <br>
+     * 2. One of the section contains valid slots <br>
      * 
      * @param course the course to be checked
      * 
      * @return true if course contains valid sections
      */
     private static boolean filterSections(Course course) {
-        Vector<Section> filteredSections = new Vector<Section>();
+        final boolean haveLabTutFilters = filters.get(LABTUT);
 
-        for (int i = 0; i < course.getNumSections(); i++) {
-            Section section = course.getSection(i);
-            // CNF: (!A+B)(C)
-            if ((!filters.get(LABTUT) || matchLabTut(section)) && filterSlots(section)) {
-                filteredSections.add(section);
-            }
-        }
-
-        if (!filteredSections.isEmpty()) {
-            course.setSections(filteredSections);
-            course.setNumSections(filteredSections.size());
+        // If no lab/tut, time and day filters
+        if (!haveLabTutFilters && !haveTimeFilters() && !haveDayFilters()) {
             return true;
         } else {
-            return false;
+
+            // Check if there exist a section that fulfills LT filter
+            boolean matchLabTutFilters = false;
+
+            for (int i = 0; i < course.getNumSections(); i++) {
+                Section section = course.getSection(i);
+
+                if (!matchLabTutFilters) {
+                    matchLabTutFilters = matchLabTut(section);
+                } else {
+                    break;
+                }
+            }
+
+            /**
+             * Remove sections if it cannot fulfils time/day filters, 
+             * even it fulfills LT filter (Required AND logic)
+             */
+            Vector<Section> filteredSections = new Vector<Section>();
+
+            for (int i = 0; i < course.getNumSections(); i++) {
+                Section section = course.getSection(i);
+
+                // CNF: (!A+B)(C)
+                if ((!haveLabTutFilters || matchLabTutFilters) && filterSlots(section)) {
+                    filteredSections.add(section);
+                }
+            }
+
+           if (!filteredSections.isEmpty()) {
+               course.setSections(filteredSections);
+               course.setNumSections(filteredSections.size());
+               return true;
+           } else {
+               return false;
+           }
         }
     }
 
