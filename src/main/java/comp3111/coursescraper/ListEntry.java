@@ -53,7 +53,8 @@ public class ListEntry {
         }
 
         enrolled.addListener((observable, oldValue, newValue) -> {
-            setEnrolled(newValue);
+            this.section.setEnrollStatus(newValue);
+            ctrl.updateEnrolledCourses(course, section, newValue);
         });
     }
 
@@ -87,16 +88,6 @@ public class ListEntry {
 
     public BooleanProperty enrolledProperty() {
         return enrolled;
-    }
-
-    //DEBUG Do I need this?
-    // This method is called manually
-    public void setEnrolled(boolean enrolled) {
-
-        this.enrolled.set(enrolled); // REMOVEME ?
-        section.setEnrollStatus(enrolled);
-
-        ctrl.updateEnrolledCourses(course, section, enrolled);
     }
 
     public void debugMsg() {

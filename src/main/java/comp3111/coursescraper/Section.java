@@ -159,7 +159,8 @@ public class Section {
 	}
 
 	/**
-	 * Two sections are considered equals even if their slots are not equal
+	 * Two sections are considered equals even if their slots are not equal 
+	 * and ignore their enrolled status
 	 * 
 	 * @param obj the target section
 	 * 
@@ -182,9 +183,6 @@ public class Section {
 			return false;
 		}
 		if (!sectionInstructor.equals(s.sectionInstructor)) {
-			return false;
-		}
-		if (enrolled != s.enrolled) {
 			return false;
 		}
 		return true;

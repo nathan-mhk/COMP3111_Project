@@ -103,9 +103,14 @@ public class Controller {
     
 	private Scraper scraper = new Scraper();
 
-	private boolean isFiltering = false;
 	private boolean init = true;
 	private String currentTerm = "";
+
+	private enum Type {
+		SEARCH,
+		FILTER,
+		LIST
+	}
 
 	private List<Course> unfilteredCourses = Collections.emptyList();
 	private List<Course> filteredCourses = Collections.emptyList();
@@ -165,7 +170,7 @@ public class Controller {
 		return unfilteredCourses;
 	}
     
-    private String generateConsoleOutput(List<Course> v) {
+    private String generateConsoleOutput(List<Course> v, Type type) {
     	String catalogOutput = "";
     	int courseCount = 0;
     	int sectionCount = 0;
@@ -222,17 +227,25 @@ public class Controller {
 		// combine the outputs and return
 		String consoleOutputResult = "";
 
-		// TODO: Add enroll output
-		if (!isFiltering) {
-			String sectionCountOutput = "Total Number of Different sections in this search: " + sectionCount + "\n";
-    		String courseCountOutput = "Total Number of Courses in this search: " + courseCount + "\n";
-    		String instructorListOutput = "Instructors who has teaching assignment this term but does not need to teach at Tu 3:10pm: \n" + noThreeTenInstructors + "\n";
-    		consoleOutputResult = courseCountOutput + sectionCountOutput + instructorListOutput + catalogOutput;
-		} else {
-			String filterResultCountOutput = "Number of courses from search that matches the filters: " + courseCount + "\n";
-			consoleOutputResult = filterResultCountOutput + catalogOutput;
-		}
+		switch (type) {
+			case SEARCH:
+				String sectionCountOutput = "Total Number of Different sections in this search: " + sectionCount + "\n";
+				String courseCountOutput = "Total Number of Courses in this search: " + courseCount + "\n";
+				String instructorListOutput = "Instructors who has teaching assignment this term but does not need to teach at Tu 3:10pm: \n" + noThreeTenInstructors + "\n";
+				consoleOutputResult = courseCountOutput + sectionCountOutput + instructorListOutput + catalogOutput;
+				break;
 
+			case FILTER:
+				String filterResultCountOutput = "Number of courses from search that matches the filters: "	+ courseCount + "\n";
+				consoleOutputResult = filterResultCountOutput + catalogOutput;
+				break;
+
+			case LIST:
+				String enrollStatusOutput = "The following sections are enrolled: \n";
+				consoleOutputResult = enrollStatusOutput + catalogOutput;
+				break;
+
+		}
     	return consoleOutputResult; 
     }
 
@@ -245,10 +258,10 @@ public class Controller {
 	 * 
 	 * @param courses a list of courses
 	 */
-	private void setConsoleOutput(List<Course> courses) {
+	private void setConsoleOutput(List<Course> courses, Type type) {
 		// reset console text
 		clearConsoleOutput();
-		textAreaConsole.setText(generateConsoleOutput(courses));
+		textAreaConsole.setText(generateConsoleOutput(courses, type));
 	}
 
 	/**
@@ -275,7 +288,6 @@ public class Controller {
 		tableViewList.setItems(listEntries);
 	}
 
-	// FIXME: When dropping section, don't remove course!!!!!
 	void updateEnrolledCourses(Course c, Section s, boolean enrolled) {
 		/**
 		 * Find if the existing course exists inside enrolledCourses
@@ -298,12 +310,9 @@ public class Controller {
 				enrolledSections.add(section);
 			}
 		}
-		System.out.println("#Currently enrolled sections: " + enrolledSections.size());
 		
 		if (enrolled) {
-			enrolledSections.add(s.clone()); // Check if duplicated
-			System.out.println("New #enrolled sections: " + enrolledSections.size());
-
+			enrolledSections.add(s);
 			
 			targetCourse.setSections(enrolledSections);
 			targetCourse.setNumSections(enrolledSections.size());
@@ -315,12 +324,8 @@ public class Controller {
 
 		} else if (enrolledSections.isEmpty()) {
 			enrolledCourses.remove(targetCourse);
-
-			System.out.println("Removed course: ");
-			System.out.println(targetCourse.getTitle() + s.getCode() + " : [" + enrolled + "]\n");
 		}
-
-		System.out.println("****************#Enrolled course: " + enrolledCourses.size());
+		setConsoleOutput(enrolledCourses, Type.LIST);
 	}
 
 	/**
@@ -330,31 +335,40 @@ public class Controller {
 	 */
 
 	// Get a list of course that have all sections not enrolled
-	// FIXME: Remove enrolled section!!!!!
 	private List<Course> getNotEnrolledCourses() {
 		Vector<Course> notEnrolled = new Vector<Course>();
 
 		for (Course course : filteredCourses) {
 			
-			Vector<Section> notEnrolledSections = new Vector<Section>();
+			if (!enrolledCourses.contains(course)) {
+				notEnrolled.add(course);
 
-			for (int i = 0; i < course.getNumSections(); ++i) {
-				Section section = course.getSection(i);
+			} else {
+				// The course exists in enrolledCourses
+				Course enrolledCourse = enrolledCourses.get(enrolledCourses.indexOf(course));
+				List<Section> enrolledSections = enrolledCourse.getSections();
 
-				if (!section.isEnrolled()) {
-					notEnrolledSections.add(section);
+				// Check if contains enrolled sections
+				Vector<Section> notEnrolledSections = new Vector<Section>();
+
+				for (int i = 0; i < course.getNumSections(); ++i) {
+					Section section = course.getSection(i);
+
+					if (!enrolledSections.contains(section)) {
+						notEnrolledSections.add(section);
+					} else {
+					}
+				}
+				// If the course contains unenrolled sections
+				if (!notEnrolledSections.isEmpty()) {
+					Course c = course.clone();
+					c.setSections(notEnrolledSections);
+					c.setNumSections(notEnrolledSections.size());
+
+					notEnrolled.add(c);
 				}
 			}
-			// If the course contains unenrolled sections
-			if (!notEnrolledSections.isEmpty()) {
-				Course targetCourse = course.clone();
-				targetCourse.setSections(notEnrolledSections);
-				targetCourse.setNumSections(notEnrolledSections.size());
-
-				notEnrolled.add(targetCourse);
-			}
 		}
-
 		return notEnrolled;
 	}
 
@@ -380,32 +394,24 @@ public class Controller {
 
 		setListEntries(enrolledCourses);
 		setListEntries(getNotEnrolledCourses());
-
-		/**
-		 * TODO:
-		 * Visually check all checkboxes that is enrolled
-		 * Get all CheckBoxTableCell inside a tableColumn?
-		 */
 	}
 
-	private void fetch() {
-		// updateEnrolledCourses();
+	private void fetch(boolean isFiltering) {
 		// scrape using scraper and set the console output
 		if (!isFiltering) {
-			setConsoleOutput(getListOfCourse());
+			setConsoleOutput(getListOfCourse(), Type.SEARCH);
 		} else {
 			filteredCourses = Filter.filterCourses(getListOfCourse());
-			setConsoleOutput(filteredCourses);
-			displayList();
+			setConsoleOutput(filteredCourses, Type.FILTER);
 		}
+		displayList();
 	}
 
     @FXML
     void search() {
-		isFiltering = false;
-
-		// Reset the unfiltered course
-		unfilteredCourses = Collections.emptyList();
+		// Reset the unfiltered and filtered course
+		unfilteredCourses.clear();
+		filteredCourses.clear();
 
 		// Reset the enrolledCourses when searching in new term
 		String temp = textfieldTerm.getText();
@@ -419,7 +425,7 @@ public class Controller {
     		return;
 		}
 
-    	fetch();
+    	fetch(false);
 	}
 	
 	/**
@@ -427,8 +433,7 @@ public class Controller {
 	 */
 	@FXML
 	void checkFilters(ActionEvent event) {
-		isFiltering = true;
-		
+
 		if (event.getSource() instanceof Button) {
 			Button btn = (Button) event.getSource();
 
@@ -455,6 +460,6 @@ public class Controller {
 		}
 
 		// Update the search result
-		fetch();
+		fetch(true);
 	}
 }

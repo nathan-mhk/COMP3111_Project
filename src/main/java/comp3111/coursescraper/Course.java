@@ -199,7 +199,7 @@ public class Course {
 		if (!description.equals(c.description)) {
 			return false;
 		}
-		if (!exclusion.equals(c.exclusion)) {
+		if ((exclusion != null) && (c.exclusion != null) && !exclusion.equals(c.exclusion)) {
 			return false;
 		}
 		if (isCommonCore != c.isCommonCore) {
