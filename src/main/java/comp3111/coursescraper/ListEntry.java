@@ -27,18 +27,29 @@ public class ListEntry {
     // The section that this entry belongs to
     private Section section;
 
-    // Delegate
-    private static Controller ctrl = null;
+    private static Controller controller = null;
+    
+    /**
+     * Set the controller of ListEntry
+     * 
+     * @param c The controller that the data model belongs to
+     */
+    public static void setController(Controller c) {
+        controller = c;
+    }
 
-
-    public ListEntry(Course course, Section section, Controller controller) {
+    /**
+     * Construct an entry according to the given couse and section
+     * @param course The course that the entry belongs to
+     * @param section The section that the entry belongs to
+     */
+    public ListEntry(Course course, Section section) {
         final int index = 0;
-        final int courseNameIndex = index + 1;
 
         String[] temp = course.getTitle().split("-");
         this.courseCode = new SimpleStringProperty(temp[index].trim());
 
-        temp = temp[courseNameIndex].split("\\(");
+        temp = temp[index + 1].split("\\(");
         this.courseName = new SimpleStringProperty(temp[index].trim());
 
         this.lectureSection = new SimpleStringProperty(section.getCode());
@@ -48,13 +59,9 @@ public class ListEntry {
         this.course = course;
         this.section = section;
 
-        if (ctrl == null) {
-            ctrl = controller;
-        }
-
         enrolled.addListener((observable, oldValue, newValue) -> {
             this.section.setEnrollStatus(newValue);
-            ctrl.updateEnrolledCourses(course, section, newValue);
+            controller.updateEnrolledCourses(this.course, this.section);
         });
     }
 

@@ -288,7 +288,8 @@ public class Controller {
 		tableViewList.setItems(listEntries);
 	}
 
-	void updateEnrolledCourses(Course c, Section s, boolean enrolled) {
+	/**
+	void updateEnrolledCourses(Course c, Section s) {
 		/**
 		 * Find if the existing course exists inside enrolledCourses
 		 * Create a new one (c.clone()) if not
@@ -310,21 +311,24 @@ public class Controller {
 				enrolledSections.add(section);
 			}
 		}
-		
-		if (enrolled) {
-			enrolledSections.add(s);
-			
-			targetCourse.setSections(enrolledSections);
-			targetCourse.setNumSections(enrolledSections.size());
 
-			// Add the course if it does not exist already
+		if (s.isEnrolled()) {
+			enrolledSections.add(s);
+
 			if (!enrolledCourses.contains(targetCourse)) {
 				enrolledCourses.add(targetCourse);
 			}
 
-		} else if (enrolledSections.isEmpty()) {
-			enrolledCourses.remove(targetCourse);
+		} else {
+			enrolledSections.remove(s);
+
+			if (enrolledSections.isEmpty()) {
+				enrolledCourses.remove(targetCourse);
+			}
 		}
+		targetCourse.setSections(enrolledSections);
+		targetCourse.setNumSections(enrolledSections.size());
+
 		setConsoleOutput(enrolledCourses, Type.LIST);
 	}
 
@@ -373,13 +377,14 @@ public class Controller {
 	}
 
 	// Create a list of listEntries, set it to displaying courses
-	private void setListEntries(List<Course> courses) {
+	 * Add entries to be displayed in List tab
+	private void addListEntries(List<Course> courses) {
 		for (Course course : courses) {
 			for (int i = 0; i < course.getNumSections(); ++i) {
 				Section section = course.getSection(i);
 
 				// Clone the course only, as sections might change but slots won't
-				listEntries.add(new ListEntry(course.clone(), section, this));
+				listEntries.add(new ListEntry(course.clone(), section));
 			}
 		}
 	}
@@ -387,13 +392,14 @@ public class Controller {
 	private void displayList() {
 		if (init) {
 			setUpTableView();
+			ListEntry.setController(this);
 			init = false;
 		}
 		// Reset
 		listEntries.clear();
 
-		setListEntries(enrolledCourses);
-		setListEntries(getNotEnrolledCourses());
+		addListEntries(enrolledCourses);
+		addListEntries(getNotEnrolledCourses());
 	}
 
 	private void fetch(boolean isFiltering) {
