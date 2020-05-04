@@ -1,6 +1,5 @@
 package comp3111.coursescraper;
 
-import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -223,6 +222,7 @@ public class Controller {
 		// combine the outputs and return
 		String consoleOutputResult = "";
 
+		// TODO: Add enroll output
 		if (!isFiltering) {
 			String sectionCountOutput = "Total Number of Different sections in this search: " + sectionCount + "\n";
     		String courseCountOutput = "Total Number of Courses in this search: " + courseCount + "\n";
@@ -277,36 +277,50 @@ public class Controller {
 
 	// FIXME: When dropping section, don't remove course!!!!!
 	void updateEnrolledCourses(Course c, Section s, boolean enrolled) {
+		/**
+		 * Find if the existing course exists inside enrolledCourses
+		 * Create a new one (c.clone()) if not
+		 */
+		Course targetCourse = c.clone();
+		for (Course course : enrolledCourses) {
+			if (course.equals(c)) {
+				targetCourse = course;
+				break;
+			}
+		}
+
 		Vector<Section> enrolledSections = new Vector<Section>();
 
 		// Get a list of currently enrolled section for that course
-		for (int i = 0; i < c.getNumSections(); ++i) {
-			Section section = c.getSection(i);
+		for (int i = 0; i < targetCourse.getNumSections(); ++i) {
+			Section section = targetCourse.getSection(i);
 			if (section.isEnrolled()) {
-				enrolledSections.add(section.clone());
+				enrolledSections.add(section);
 			}
 		}
+		System.out.println("#Currently enrolled sections: " + enrolledSections.size());
 		
 		if (enrolled) {
-			enrolledSections.add(s);
+			enrolledSections.add(s.clone()); // Check if duplicated
+			System.out.println("New #enrolled sections: " + enrolledSections.size());
+
+			
+			targetCourse.setSections(enrolledSections);
+			targetCourse.setNumSections(enrolledSections.size());
+
+			// Add the course if it does not exist already
+			if (!enrolledCourses.contains(targetCourse)) {
+				enrolledCourses.add(targetCourse);
+			}
+
+		} else if (enrolledSections.isEmpty()) {
+			enrolledCourses.remove(targetCourse);
+
+			System.out.println("Removed course: ");
+			System.out.println(targetCourse.getTitle() + s.getCode() + " : [" + enrolled + "]\n");
 		}
-		if (enrolled || !enrolledSections.isEmpty()) {
-			Course course = c.clone();
-			course.setSections(enrolledSections);
-			course.setNumSections(enrolledSections.size());
 
-			/**
-			 * Two courses are considered equals even if their sections are not equal
-			 * Update the existing course inside enrolledCourses
-			 */
-			enrolledCourses.remove(course);
-			enrolledCourses.add(course);
-
-		} else {
-			enrolledCourses.remove(c);
-		}
-
-		System.out.println("Enrolled course: " + enrolledCourses.size());
+		System.out.println("****************#Enrolled course: " + enrolledCourses.size());
 	}
 
 	/**
@@ -316,7 +330,7 @@ public class Controller {
 	 */
 
 	// Get a list of course that have all sections not enrolled
-	// FIXME: Removed enrolled section!!!!!
+	// FIXME: Remove enrolled section!!!!!
 	private List<Course> getNotEnrolledCourses() {
 		Vector<Course> notEnrolled = new Vector<Course>();
 
@@ -328,7 +342,7 @@ public class Controller {
 				Section section = course.getSection(i);
 
 				if (!section.isEnrolled()) {
-					notEnrolledSections.add(section.clone());
+					notEnrolledSections.add(section);
 				}
 			}
 			// If the course contains unenrolled sections
@@ -350,7 +364,8 @@ public class Controller {
 			for (int i = 0; i < course.getNumSections(); ++i) {
 				Section section = course.getSection(i);
 
-				listEntries.add(new ListEntry(course.clone(), section.clone(), this));
+				// Clone the course only, as sections might change but slots won't
+				listEntries.add(new ListEntry(course.clone(), section, this));
 			}
 		}
 	}

@@ -92,15 +92,14 @@ public class ListEntry {
     //DEBUG Do I need this?
     // This method is called manually
     public void setEnrolled(boolean enrolled) {
-        System.out.println(course.getTitle() + "\n" + section.getCode() + " : " + enrolled);    //REMOVEME
 
-        this.enrolled.set(enrolled);
+        this.enrolled.set(enrolled); // REMOVEME ?
         section.setEnrollStatus(enrolled);
 
         ctrl.updateEnrolledCourses(course, section, enrolled);
     }
 
     public void debugMsg() {
-        System.out.println(course.getTitle() + "\n" + section.getCode() + " : " + enrolled);
+        System.out.println(course.getTitle() + "\n" + section.getCode() + " : " + enrolled.getValue());
     }
 }

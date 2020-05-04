@@ -221,6 +221,7 @@ class Filter {
         return false;
     }
 
+    // FIXME: Rework required
     /**
      * Check if the given section contains valid slots. <br><br>
      * A slot is valid if it: <br>
