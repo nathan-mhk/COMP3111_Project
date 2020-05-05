@@ -29,6 +29,7 @@ import javafx.util.Callback;
 
 import java.util.*;
 import java.time.LocalTime;
+import javafx.scene.text.Font;
 
 public class Controller {
 
@@ -115,6 +116,7 @@ public class Controller {
 	private List<Course> unfilteredCourses = Collections.emptyList();
 	private List<Course> filteredCourses = Collections.emptyList();
 	private Vector<Course> enrolledCourses = new Vector<Course>();
+	private Vector<Label> enrolledSlots = new Vector<Label>();
 
 	private ObservableList<ListEntry> listEntries = FXCollections.observableArrayList();
     
@@ -343,6 +345,8 @@ public class Controller {
 		targetCourse.setNumSections(enrolledSections.size());
 
 		setConsoleOutput(enrolledCourses, Type.LIST);
+		
+		updateTimetable();
 	}
 
 	/**
@@ -491,5 +495,74 @@ public class Controller {
 		}
 
 		fetch(true);
+	}
+	
+	/**
+	 * This function update the course timetable
+	 */
+	void updateTimetable() {
+		AnchorPane ap = (AnchorPane)tabTimetable.getContent();
+		// remove the old slots
+		for (int i = 0; i < enrolledSlots.size(); i++)
+			ap.getChildren().remove(enrolledSlots.get(i));
+		enrolledSlots.clear();
+		
+		// for all courses in the list of enrolled courses
+		for (int i = 0; i < enrolledCourses.size(); i++) {
+			Course c = enrolledCourses.get(i);
+			
+			// for all sections in this courses
+			for (int j = 0; j < c.getNumSections(); j++) {
+				Section sec = c.getSection(j);
+				
+				// find the enrolled section(s)
+				if (sec.isEnrolled()) {
+					
+					// pick a colour for this enrolled section
+					Random random = new Random();
+					int red = random.nextInt(255);
+			        int green = random.nextInt(255);
+			        int blue = random.nextInt(255);
+			        double opacity = 0.5;
+		            Color randomColor = Color.rgb(red, green, blue, opacity);
+					
+		            // for all slots in this section
+					for (int k = 0; k < sec.getNumSlots(); k++) {
+						Slot s = sec.getSlot(k);
+			        	
+			        	double start = (double)s.getStartHour() * 20 - 140 + (double)s.getStartMinute() / 30 * 10;
+			        	double end = (double)s.getEndHour() * 20 - 140 + (double)s.getEndMinute() / 30 * 10;
+			        	double length = end - start;
+			        	double day = (double)s.getDay() + 1;
+			        	day *= 100;
+			        	
+			        	String [] cTitle = c.getTitle().split("-");
+			        	String title = cTitle[0];
+			        	if (length < 20)
+			        		title += "\t" + sec.getCode();
+			        	else 
+			        		title += "\n" + sec.getCode();
+			        	
+			        	Label label = new Label(title);
+			        	label.setFont(new Font("Arial", 10));
+			        	
+			        	/*
+			        	 * Y: Each half hour is size 10 at Y axis
+			        	 * Y: 0900 starts at 40 ---> 2200 starts at 300
+			        	 * X: Each day is 100, so Mo => 100, Tu => 200 ...
+			        	 */
+			        	label.setBackground(new Background(new BackgroundFill(randomColor, CornerRadii.EMPTY, Insets.EMPTY)));
+			        	label.setLayoutX(day);
+			        	label.setLayoutY(start);
+			        	label.setMinWidth(100.0);
+			        	label.setMaxWidth(100.0);
+			        	label.setMinHeight(length);
+			        	label.setMaxHeight(length);
+			        	ap.getChildren().addAll(label);
+			        	enrolledSlots.add(label);
+					}
+				}
+			}
+		}
 	}
 }

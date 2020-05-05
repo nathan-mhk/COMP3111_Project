@@ -28,7 +28,7 @@ public class CourseTest {
 		
 		sec.setID(2011);
 		
-		for (int k = 10; k < 25; k++)
+		for (int k = 10; k < 65; k++)
 			i.addSection(sec);
 	}
 
@@ -49,7 +49,7 @@ public class CourseTest {
 
 	@Test
 	public void testGetNumSections() {
-		assertEquals(i.getNumSections(), 20);
+		assertEquals(i.getNumSections(), 50);
 	}
 	
 	@Test
@@ -57,6 +57,6 @@ public class CourseTest {
 		assertEquals(i.getSection(5).getID(), 3111);
 		assertEquals(i.getLastSection().getID(), 2011);
 		assertEquals(i.getSection(-1), null);
-		assertEquals(i.getSection(25), null);
+		assertEquals(i.getSection(50), null);
 	}
 }

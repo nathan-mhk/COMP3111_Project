@@ -117,22 +117,35 @@ public class Scraper {
 	}
 	
 	private void addSlot(HtmlElement e, Section sec, boolean secondRow) {
-		if (sec == null)
-			return;
-		String times[] =  e.getChildNodes().get(secondRow ? 0 : 3).asText().split(" ");
+		String times[] =  e.getChildNodes().get(secondRow ? 0 : 3).asText().split("\\s+");
 		String venue = e.getChildNodes().get(secondRow ? 1 : 4).asText();
 		if (times[0].equals("TBA"))
 			return;
-		for (int j = 0; j < times[0].length(); j+=2) {
-			String code = times[0].substring(j , j + 2);
-			if (Slot.DAYS_MAP.get(code) == null)
-				break;
-			Slot s = new Slot();
-			s.setDay(Slot.DAYS_MAP.get(code));
-			s.setStart(times[1]);
-			s.setEnd(times[3]);
-			s.setVenue(venue);
-			sec.addSlot(s);	
+		// if time contains the date, e.g.: "19-FEB-2020 - 19-MAY-2020\nTuTh 09:00AM - 10:20AM" instead of just "TuTh 09:00AM - 10:20AM"
+		if (times[1].equals("-") ) {
+			for (int j = 0; j < times[3].length(); j+=2) {
+				String code = times[3].substring(j , j + 2);
+				if (Slot.DAYS_MAP.get(code) == null)
+					break;
+				Slot s = new Slot();
+				s.setDay(Slot.DAYS_MAP.get(code));
+				s.setStart(times[4]);
+				s.setEnd(times[6]);
+				s.setVenue(venue);
+				sec.addSlot(s);	
+			}
+		} else {
+			for (int j = 0; j < times[0].length(); j+=2) {
+				String code = times[0].substring(j , j + 2);
+				if (Slot.DAYS_MAP.get(code) == null)
+					break;
+				Slot s = new Slot();
+				s.setDay(Slot.DAYS_MAP.get(code));
+				s.setStart(times[1]);
+				s.setEnd(times[3]);
+				s.setVenue(venue);
+				sec.addSlot(s);	
+			}
 		}
 
 	}
