@@ -140,5 +140,4 @@ public class Slot {
 	public void setDay(int day) {
 		this.day = day;
 	}
-
 }
