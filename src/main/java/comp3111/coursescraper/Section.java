@@ -117,8 +117,8 @@ public class Section {
 	}
 
 	/**
-	 * This function set the list of slots for this sections
-	 * @param slots the slots to be set
+	 * This function set the list of slots of this section
+	 * @param slots the list of slots to be set
 	 */
 	public void setSlots(List<Slot> slots) {
 		this.slots = slots;
@@ -150,11 +150,51 @@ public class Section {
 		this.numSlots = numSlots;
 	}
 
+	/**
+	 * Get the enrollment status of this section
+	 * @return true if the current section is enrolled
+	 */
 	public boolean isEnrolled() {
 		return enrolled;
 	}
 
+	/**
+	 * Set the enrollment status of this section
+	 * @param enrolled The enrollment status of this section
+	 */
 	public void setEnrollStatus(boolean enrolled) {
 		this.enrolled = enrolled;
+	}
+
+	/**
+	 * Check if the given section equals the caller. 
+	 * Two sections are considered equals even if their slots are not equal. 
+	 * The enrollment status of is also ignored
+	 * 
+	 * @param obj The target section
+	 * 
+	 * @return true If source section equals target section
+	 */
+	@Override
+	public boolean equals(Object obj) {
+		if (obj == null) {
+            return false;
+		}
+		if (!Section.class.isAssignableFrom(obj.getClass())) {
+			return false;
+		}
+
+		final Section s = (Section) obj;
+
+		if (sectionID != s.sectionID) {
+			return false;
+		}
+		if (!sectionCode.equals(s.sectionCode)) {
+			return false;
+		}
+		if (!sectionInstructor.equals(s.sectionInstructor)) {
+			return false;
+		}
+		return true;
 	}
 }
