@@ -41,13 +41,14 @@ public class ListEntry {
      * @param section The section that the entry belongs to
      */
     public ListEntry(Course course, Section section) {
-        final int index = 0;
 
-        String[] temp = course.getTitle().split("-");
-        this.courseCode = new SimpleStringProperty(temp[index].trim());
+        // COMP 2012 - Object-Oriented Programming and Data Structures (4 units)
+        final int hyphenDelim = course.getTitle().indexOf("-");
+        final int parenDelim = course.getTitle().indexOf("(");
+        String title = course.getTitle();
 
-        temp = temp[index + 1].split("\\(");
-        this.courseName = new SimpleStringProperty(temp[index].trim());
+        this.courseCode = new SimpleStringProperty(title.substring(0, hyphenDelim).trim());
+        this.courseName = new SimpleStringProperty(title.substring(hyphenDelim + 1, parenDelim).trim());
 
         this.lectureSection = new SimpleStringProperty(section.getCode());
         this.instructor = new SimpleStringProperty(section.getInstructor());
