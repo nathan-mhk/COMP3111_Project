@@ -431,6 +431,7 @@ public class Controller {
 	private void fetch(boolean filtered) {
 		// scrape using scraper and set the console output
 		if (!filtered) {
+			filteredCourses = getListOfCourse();
 			setConsoleOutput(getListOfCourse(), Type.SEARCH);
 		} else {
 			filteredCourses = Filter.filterCourses(getListOfCourse());
