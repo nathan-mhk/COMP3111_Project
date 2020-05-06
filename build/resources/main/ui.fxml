@@ -66,8 +66,8 @@
                               <CheckBox layoutX="243.0" layoutY="98.0" mnemonicParsing="false" onAction="#checkFilters" text="Thursday" />
                               <CheckBox layoutX="243.0" layoutY="115.0" mnemonicParsing="false" onAction="#checkFilters" text="Friday" />
                               <CheckBox layoutX="243.0" layoutY="132.0" mnemonicParsing="false" onAction="#checkFilters" text="Saturday" />
-                              <Button layoutX="162.0" layoutY="14.0" mnemonicParsing="false" onAction="#checkFilters" text="Select All" />
-                              <CheckBox layoutX="360.0" layoutY="48.0" mnemonicParsing="false" onAction="#checkFilters" text="Common Core" />
+                              <Button fx:id="buttonFilter" layoutX="162.0" layoutY="14.0" mnemonicParsing="false" onAction="#checkFilters" text="Select All" />
+                              <CheckBox fx:id="checkBoxCC" layoutX="360.0" layoutY="48.0" mnemonicParsing="false" onAction="#checkFilters" text="Common Core" />
                               <CheckBox layoutX="360.0" layoutY="65.0" mnemonicParsing="false" onAction="#checkFilters" text="No Exclusion" />
                               <CheckBox layoutX="500.0" layoutY="48.0" mnemonicParsing="false" onAction="#checkFilters" text="With Labs or Tutorial" />
                               <Label layoutX="32.0" layoutY="278.0" prefHeight="41.0" prefWidth="642.0" text="* When the filter is applied, display all sections that fulfill all of these conditions; Print them to the console below on any change of checkbox" wrapText="true" />
