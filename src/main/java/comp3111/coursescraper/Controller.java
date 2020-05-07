@@ -3,6 +3,7 @@ package comp3111.coursescraper;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.concurrent.Task;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.Node;
@@ -120,14 +121,74 @@ public class Controller {
 
 	private ObservableList<ListEntry> listEntries = FXCollections.observableArrayList();
     
+    private boolean firstClick = true;
+    
+    private List<String> sub_list;
+    
+    Task copyWorker;
+    
     @FXML
     void allSubjectSearch() {
+    	buttonSfqEnrollCourse.setDisable(false);
+    	
+    	if(firstClick) {
+        	sub_list = scraper.allSubCount(textfieldURL.getText(), textfieldTerm.getText());
+        	
+        	textAreaConsole.setText("Total Number of Categories/Code Prefix: " + sub_list.size());
+        	
+        	firstClick = false;
+    	}else {
+
+            AnchorPane ap = (AnchorPane)tabAllSubject.getContent();
+            
+    		ProgressBar pb = new ProgressBar(0);
+        	copyWorker = createWorker(sub_list);
+        	   
+        	pb.progressProperty().unbind();
+            pb.progressProperty().bind(copyWorker.progressProperty());
+            pb.progressProperty().addListener(new ChangeListener<Number>(){
+                @Override
+                public void changed(ObservableValue<? extends Number> ov, Number t, Number t1) {
+                    if(t1.doubleValue()==1){
+                    	textAreaConsole.setText("Work Done");
+                    }else {
+                    	textAreaConsole.setText("In Progress");
+                    }
+                }
+            });
+
+            new Thread(copyWorker).start();   
+            
+            
+        	pb.setLayoutX(316.0);
+        	pb.setLayoutY(33.0);
+        	pb.setMinWidth(264.0);
+        	pb.setMaxWidth(264.0);
+        	pb.setMinHeight(18.0);
+        	pb.setMaxHeight(18.0);
+        	
+        	ap.getChildren().add(pb);
+
+    	}
+    	
     	
     }
-
-    @FXML
-    void findInstructorSfq() {
-    	buttonInstructorSfq.setDisable(true);
+    public Task createWorker(List<String> sub_list) {
+        return new Task() {
+            @Override
+            protected Object call() throws Exception {
+                // DO YOUR WORK
+            	for(int i = 0; i < sub_list.size(); i++) {
+            		
+            		List<Course> c = scraper.scrape(textfieldURL.getText(), textfieldTerm.getText(),sub_list.get(i));
+            		System.out.println("SUBJECT is done");
+            		Thread.sleep(500);
+            		updateProgress(i+1, sub_list.size());     		
+            	}
+                
+                return true;
+            }
+        };
     }
 
     @FXML
