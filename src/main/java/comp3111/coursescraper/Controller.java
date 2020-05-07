@@ -88,6 +88,7 @@ public class Controller {
     
     @FXML
     void allSubjectSearch() {
+    	buttonSfqEnrollCourse.setDisable(false);
     	
     	if(firstClick) {
         	sub_list = scraper.allSubCount(textfieldURL.getText(), textfieldTerm.getText());
@@ -129,9 +130,6 @@ public class Controller {
 
     	}
     	
-
-    	
-  
     	
     }
     public Task createWorker(List<String> sub_list) {
@@ -155,15 +153,22 @@ public class Controller {
     @FXML
     void findInstructorSfq() {
     	buttonInstructorSfq.setDisable(true);
+
     }
 
     @FXML
     void findSfqEnrollCourse() {
-
+    	System.out.println("It works!");
+    	List<String> temp = scraper.scrapeSqf(textfieldSfqUrl.getText());
+    	for(String s: temp) {
+    		System.out.println(s);
+    	}
+    		
     }
 
     @FXML
     void search() {
+    	buttonSfqEnrollCourse.setDisable(false);
     	List<Course> v = scraper.scrape(textfieldURL.getText(), textfieldTerm.getText(),textfieldSubject.getText());
     	for (Course c : v) {
     		String newline = c.getTitle() + "\n";
@@ -189,8 +194,6 @@ public class Controller {
     	randomLabel.setMaxHeight(60);
     
     	ap.getChildren().addAll(randomLabel);
-    	
-    	
     	
     }
 
