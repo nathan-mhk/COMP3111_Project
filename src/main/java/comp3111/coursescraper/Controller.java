@@ -133,11 +133,12 @@ public class Controller {
     private boolean firstClick = true;
     
     private List<String> sub_list;
+    private int total_num_course = 0;
     
     Task copyWorker;
 	@FXML
 	void allSubjectSearch() {
-buttonSfqEnrollCourse.setDisable(false);
+		buttonSfqEnrollCourse.setDisable(false);
     	
     	if(firstClick) {
         	sub_list = scraper.allSubCount(textfieldURL.getText(), textfieldTerm.getText());
@@ -158,7 +159,7 @@ buttonSfqEnrollCourse.setDisable(false);
                 @Override
                 public void changed(ObservableValue<? extends Number> ov, Number t, Number t1) {
                     if(t1.doubleValue()==1){
-                    	textAreaConsole.setText("Work Done");
+                    	textAreaConsole.setText("Total Number of Courses fetched: " + total_num_course);
                     }else {
                     	textAreaConsole.setText("In Progress");
                     }
@@ -175,18 +176,21 @@ buttonSfqEnrollCourse.setDisable(false);
         	pb.setMaxHeight(18.0);
         	
         	ap.getChildren().add(pb);
+        	
     	}
 	}
     public Task createWorker(List<String> sub_list) {
         return new Task() {
             @Override
             protected Object call() throws Exception {
-                // DO YOUR WORK
+           
             	for(int i = 0; i < sub_list.size(); i++) {
-            		
+
             		List<Course> c = scraper.scrape(textfieldURL.getText(), textfieldTerm.getText(),sub_list.get(i));
+            		total_num_course += c.size();
+
             		System.out.println("SUBJECT is done");
-            		Thread.sleep(500);
+            		Thread.sleep(200);
             		updateProgress(i+1, sub_list.size());     		
             	}
                 
@@ -202,7 +206,12 @@ buttonSfqEnrollCourse.setDisable(false);
 
     @FXML
     void findSfqEnrollCourse() {
-
+    	System.out.println("It works!");
+    	List<String> temp = scraper.scrapeSqf(textfieldSfqUrl.getText());
+    	for(String s: temp) {
+    		System.out.println(s);
+    	}
+    		
     }
     
     private boolean isMainURLValid() {
