@@ -4,6 +4,7 @@ import java.awt.event.ActionEvent;
 
 import javafx.concurrent.Task;
 import javafx.fxml.FXML;
+import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
@@ -93,29 +94,44 @@ public class Controller {
         	
         	textAreaConsole.setText("Total Number of Categories/Code Prefix: " + sub_list.size());
         	
-        	
         	firstClick = false;
     	}else {
-    		textAreaConsole.setText("hello");
-    		
+
+            AnchorPane ap = (AnchorPane)tabAllSubject.getContent();
+            
     		ProgressBar pb = new ProgressBar(0);
         	copyWorker = createWorker(sub_list);
+        	   
         	pb.progressProperty().unbind();
             pb.progressProperty().bind(copyWorker.progressProperty());
             pb.progressProperty().addListener(new ChangeListener<Number>(){
-            	
                 @Override
                 public void changed(ObservableValue<? extends Number> ov, Number t, Number t1) {
                     if(t1.doubleValue()==1){
                     	textAreaConsole.setText("Work Done");
+                    }else {
+                    	textAreaConsole.setText("In Progress");
                     }
                 }
             });
 
-            new Thread(copyWorker).start();
-            AnchorPane ap = (AnchorPane)tabAllSubject.getContent();
-            ap.getChildren().add(pb);
+            new Thread(copyWorker).start();   
+            
+            
+        	pb.setLayoutX(316.0);
+        	pb.setLayoutY(33.0);
+        	pb.setMinWidth(264.0);
+        	pb.setMaxWidth(264.0);
+        	pb.setMinHeight(18.0);
+        	pb.setMaxHeight(18.0);
+        	
+        	ap.getChildren().add(pb);
+
     	}
+    	
+
+    	
+  
     	
     }
     public Task createWorker(List<String> sub_list) {
