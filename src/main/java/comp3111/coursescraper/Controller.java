@@ -193,7 +193,12 @@ public class Controller {
 
     @FXML
     void findSfqEnrollCourse() {
-
+    	System.out.println("It works!");
+    	List<String> temp = scraper.scrapeSqf(textfieldSfqUrl.getText());
+    	for(String s: temp) {
+    		System.out.println(s);
+    	}
+    		
     }
     
     private boolean isMainURLValid() {
