@@ -67,18 +67,33 @@ public class Controller {
 
     @FXML
     private TextArea textAreaConsole;
-    
+
     private Scraper scraper = new Scraper();
+    
+    private boolean firstClick = true;
     
     @FXML
     void allSubjectSearch() {
-    	System.out.println("Hello");
-    	List<String> temp = scraper.allSubCount(textfieldURL.getText(), textfieldTerm.getText());
-    	String result = "";
-    	for(String s: temp) {
-    		result = result + "\n" + s;
+    	
+    	if(firstClick) {
+        	List<String> temp = scraper.allSubCount(textfieldURL.getText(), textfieldTerm.getText());
+        	/*
+        	String result = "";
+        	for(String s: temp) {
+        		result = result + "\n" + s;
+        	}
+        	textAreaConsole.setText(result+"\n");
+        	*/
+        	textAreaConsole.setText("Total Number of Categories/Code Prefix: " + temp.size());
+        	progressbar = new ProgressBar();
+    		progressbar.setProgress(0.25F);
+        	firstClick = false;
+    	}else {
+    		textAreaConsole.setText("hello");
+    		
+    		
     	}
-    	textAreaConsole.setText(result+"\n");
+    	
     }
 
     @FXML
