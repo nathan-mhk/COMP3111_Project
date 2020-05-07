@@ -111,10 +111,31 @@ public class Scraper {
 		try {
 			
 			HtmlPage page = client.getPage(baseurl + "/" + term + "/");
-
-			
-			//List<?> items = (List<?>) page.getByXPath("//div[@class='course']");
 			List<?> depts = (List<?>) page.getByXPath("//div[@class='depts']/a");
+			Vector<String> result = new Vector<String>();
+			
+			for (int i =0; i < depts.size(); i++) {
+				String name = new String();
+				HtmlElement htmlItem = (HtmlElement) depts.get(i);
+				name = htmlItem.getTextContent();
+				result.add(name);
+			}
+			
+			client.close();
+			return result;
+		} catch (Exception e) {
+			System.out.println(e);
+		}
+		return null;
+	}
+	/*
+	public List<String> subjectScrape(String baseurl, String term) {
+
+		try {
+			
+			HtmlPage page = client.getPage(baseurl + "/" + term + "/");
+
+			List<?> depts = (List<?>) page.getByXPath("//div[@class='course']/a");
 			//HtmlDivision div = (HtmlDivision) page.getByXPath("//div[@class='depts']").get(0);
 			
 			Vector<String> result = new Vector<String>();
@@ -132,7 +153,7 @@ public class Scraper {
 			System.out.println(e);
 		}
 		return null;
-	}
+	}*/
 
 	public List<Course> scrape(String baseurl, String term, String sub) {
 

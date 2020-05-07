@@ -1,6 +1,8 @@
 package comp3111.coursescraper;
 
 import java.awt.event.ActionEvent;
+
+import javafx.concurrent.Task;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
@@ -16,7 +18,14 @@ import javafx.scene.layout.CornerRadii;
 import javafx.geometry.Insets;
 import javafx.scene.paint.Color;
 
+
 import java.util.Random;
+
+import com.gargoylesoftware.htmlunit.javascript.host.Console;
+
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
+
 import java.util.List;
 public class Controller {
 
@@ -72,28 +81,59 @@ public class Controller {
     
     private boolean firstClick = true;
     
+    private List<String> sub_list;
+    
+    Task copyWorker;
+    
     @FXML
     void allSubjectSearch() {
     	
     	if(firstClick) {
-        	List<String> temp = scraper.allSubCount(textfieldURL.getText(), textfieldTerm.getText());
-        	/*
-        	String result = "";
-        	for(String s: temp) {
-        		result = result + "\n" + s;
-        	}
-        	textAreaConsole.setText(result+"\n");
-        	*/
-        	textAreaConsole.setText("Total Number of Categories/Code Prefix: " + temp.size());
-        	progressbar = new ProgressBar();
-    		progressbar.setProgress(0.25F);
+        	sub_list = scraper.allSubCount(textfieldURL.getText(), textfieldTerm.getText());
+        	
+        	textAreaConsole.setText("Total Number of Categories/Code Prefix: " + sub_list.size());
+        	
+        	
         	firstClick = false;
     	}else {
     		textAreaConsole.setText("hello");
     		
-    		
+    		ProgressBar pb = new ProgressBar(0);
+        	copyWorker = createWorker(sub_list);
+        	pb.progressProperty().unbind();
+            pb.progressProperty().bind(copyWorker.progressProperty());
+            pb.progressProperty().addListener(new ChangeListener<Number>(){
+            	
+                @Override
+                public void changed(ObservableValue<? extends Number> ov, Number t, Number t1) {
+                    if(t1.doubleValue()==1){
+                    	textAreaConsole.setText("Work Done");
+                    }
+                }
+            });
+
+            new Thread(copyWorker).start();
+            AnchorPane ap = (AnchorPane)tabAllSubject.getContent();
+            ap.getChildren().add(pb);
     	}
     	
+    }
+    public Task createWorker(List<String> sub_list) {
+        return new Task() {
+            @Override
+            protected Object call() throws Exception {
+                // DO YOUR WORK
+            	for(int i = 0; i < sub_list.size(); i++) {
+            		
+            		List<Course> c = scraper.scrape(textfieldURL.getText(), textfieldTerm.getText(),sub_list.get(i));
+            		System.out.println(c.size());
+            		Thread.sleep(500);
+            		updateProgress(i+1, sub_list.size());     		
+            	}
+                
+                return true;
+            }
+        };
     }
 
     @FXML
