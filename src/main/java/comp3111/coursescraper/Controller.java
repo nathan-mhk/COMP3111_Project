@@ -55,7 +55,13 @@ public class Controller {
     private ComboBox<?> comboboxTimeSlot;
 
     @FXML
-    private Tab tabFilter;
+	private Tab tabFilter;
+	
+	@FXML
+	private Button buttonFilter;
+
+	@FXML
+	private CheckBox checkBoxCC;
 
     @FXML
     private Tab tabList;

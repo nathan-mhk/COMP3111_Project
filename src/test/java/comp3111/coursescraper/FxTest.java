@@ -14,6 +14,7 @@ import org.testfx.framework.junit.ApplicationTest;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
+import javafx.scene.control.CheckBox;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 import javafx.fxml.FXMLLoader;
@@ -45,5 +46,16 @@ public class FxTest extends ApplicationTest {
 		
 		clickOn("#tabMain");
 		clickOn("#buttonSearch");
+
+		clickOn("#tabFilter");
+		clickOn("#buttonFilter");
+		clickOn("#buttonFilter");
+		clickOn("#checkBoxCC");
+		clickOn("#tabList");
+
+		/**
+		 * TODO:
+		 * Click on check boxes in List tab
+		 */
 	}
 }
