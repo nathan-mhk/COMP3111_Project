@@ -72,7 +72,13 @@ public class Controller {
     
     @FXML
     void allSubjectSearch() {
-    	
+    	System.out.println("Hello");
+    	List<String> temp = scraper.allSubCount(textfieldURL.getText(), textfieldTerm.getText());
+    	String result = "";
+    	for(String s: temp) {
+    		result = result + "\n" + s;
+    	}
+    	textAreaConsole.setText(result+"\n");
     }
 
     @FXML
