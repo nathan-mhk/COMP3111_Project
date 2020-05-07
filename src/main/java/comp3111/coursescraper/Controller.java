@@ -140,7 +140,7 @@ public class Controller {
             	for(int i = 0; i < sub_list.size(); i++) {
             		
             		List<Course> c = scraper.scrape(textfieldURL.getText(), textfieldTerm.getText(),sub_list.get(i));
-            		System.out.println(c.size());
+            		System.out.println("SUBJECT is done");
             		Thread.sleep(500);
             		updateProgress(i+1, sub_list.size());     		
             	}

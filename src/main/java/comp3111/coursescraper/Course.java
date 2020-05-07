@@ -10,6 +10,7 @@ public class Course {
 	private String exclusion;
 	private Slot [] slots;
 	private int numSlots;
+	private int sfq;
 	
 	public Course() {
 		slots = new Slot[DEFAULT_MAX_SLOT];
