@@ -83,6 +83,7 @@ public class Controller {
     private boolean firstClick = true;
     
     private List<String> sub_list;
+    private int total_course_num = 0;
     
     Task copyWorker;
     
@@ -109,7 +110,7 @@ public class Controller {
                 @Override
                 public void changed(ObservableValue<? extends Number> ov, Number t, Number t1) {
                     if(t1.doubleValue()==1){
-                    	textAreaConsole.setText("Work Done");
+                    	textAreaConsole.setText("total_course_num: "+total_course_num);
                     }else {
                     	textAreaConsole.setText("In Progress");
                     }
@@ -141,6 +142,7 @@ public class Controller {
             		
             		List<Course> c = scraper.scrape(textfieldURL.getText(), textfieldTerm.getText(),sub_list.get(i));
             		System.out.println("SUBJECT is done");
+            		total_course_num += c.size();
             		Thread.sleep(500);
             		updateProgress(i+1, sub_list.size());     		
             	}
