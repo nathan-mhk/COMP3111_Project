@@ -27,6 +27,8 @@ import com.gargoylesoftware.htmlunit.javascript.host.Console;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 public class Controller {
 
@@ -81,7 +83,8 @@ public class Controller {
     private Scraper scraper = new Scraper();
     
     private boolean firstClick = true;
-    
+	private int[] unfilteredCourses = new int[27];
+	private List<Number> filteredCourses = Collections.emptyList();
     private List<String> sub_list;
     private int total_course_num = 0;
     
@@ -128,25 +131,31 @@ public class Controller {
         	pb.setMaxHeight(18.0);
         	
         	ap.getChildren().add(pb);
-
-    	}
-    	
-    	
+        	
+    	}	
     }
+    private List<Course> list = Collections.synchronizedList(new ArrayList<Course>()); 
+    
     public Task createWorker(List<String> sub_list) {
         return new Task() {
             @Override
             protected Object call() throws Exception {
-                // DO YOUR WORK
+            	
             	for(int i = 0; i < sub_list.size(); i++) {
             		
             		List<Course> c = scraper.scrape(textfieldURL.getText(), textfieldTerm.getText(),sub_list.get(i));
             		System.out.println("SUBJECT is done");
+            		
             		total_course_num += c.size();
+            		list.addAll(c);
+            		unfilteredCourses[i] = c.size();
+            		
             		Thread.sleep(500);
             		updateProgress(i+1, sub_list.size());     		
             	}
-                
+            	for(Course i : list ) {
+            		System.out.println(i);
+            	}
                 return true;
             }
         };
