@@ -83,7 +83,7 @@ public class Controller {
     private Scraper scraper = new Scraper();
     
     private boolean firstClick = true;
-	private int[] unfilteredCourses = new int[27];
+	private int[] unfilteredCourses = new int[80];
 	private List<Number> filteredCourses = Collections.emptyList();
     private List<String> sub_list;
     private int total_course_num = 0;
@@ -150,12 +150,13 @@ public class Controller {
             		list.addAll(c);
             		unfilteredCourses[i] = c.size();
             		
-            		Thread.sleep(500);
+            		Thread.sleep(200);
             		updateProgress(i+1, sub_list.size());     		
             	}
-            	for(Course i : list ) {
-            		System.out.println(i);
-            	}
+            	
+            	for(Course j: list)
+            		System.out.println(j);
+
                 return true;
             }
         };
