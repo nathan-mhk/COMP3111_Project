@@ -130,6 +130,7 @@ public class Controller {
     private int total_num_course = 0;
     
     Task copyWorker;
+    
 	@FXML
 	void allSubjectSearch() {
 		buttonSfqEnrollCourse.setDisable(false);
