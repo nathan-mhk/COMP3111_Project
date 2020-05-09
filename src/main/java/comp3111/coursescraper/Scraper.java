@@ -215,6 +215,14 @@ public class Scraper {
 		return null;
 	}
 	
+	/**
+	 * This function scrape the content on web and put them in the the 
+	 * structure of courses, sections and slots
+	 * @param baseurl the domain name and the folder of the course catalog
+	 * @param term the term to scrape, e.g.: 1910
+	 * @param sub the subject to scrape, e.g.: COMP
+	 * @return a list of courses
+	 */
 	public List<Course> scrape(String baseurl, String term, String sub) {
 
 		try {

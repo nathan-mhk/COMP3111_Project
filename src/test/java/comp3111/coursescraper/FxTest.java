@@ -17,6 +17,7 @@ import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
+import javafx.scene.input.KeyCode;
 import javafx.fxml.FXMLLoader;
 
 public class FxTest extends ApplicationTest {
@@ -45,7 +46,50 @@ public class FxTest extends ApplicationTest {
 		assertTrue(b.isDisabled());
 		
 		clickOn("#tabMain");
+		
+		// test url
+		clickOn("#textfieldURL");
+		moveTo("#textfieldTerm");
+		type(KeyCode.END); 
+		type(KeyCode.BACK_SPACE, 8); 
 		clickOn("#buttonSearch");
+		sleep(500);
+		
+		// test subject
+		clickOn("#textfieldSubject");
+		type(KeyCode.BACK_SPACE, 4); 
+		write("c");
+		clickOn("#buttonSearch");
+		clickOn("#textfieldSubject");
+		type(KeyCode.BACK_SPACE, 4); 
+		write("comp");
+		clickOn("#buttonSearch");
+		sleep(500);
+		
+		// test term
+		clickOn("#textfieldTerm");
+		type(KeyCode.BACK_SPACE, 4); 
+		write("19");
+		clickOn("#buttonSearch");
+		clickOn("#textfieldTerm");
+		type(KeyCode.BACK_SPACE, 4); 
+		write("191a");
+		clickOn("#buttonSearch");
+		sleep(500);
+		
+		// back to default
+		clickOn("#textfieldURL");
+		moveTo("#textfieldTerm");
+		type(KeyCode.END); 
+		write("cgi-bin/");
+		clickOn("#textfieldTerm");
+		type(KeyCode.BACK_SPACE, 4); 
+		write("1910");
+		clickOn("#textfieldSubject");
+		type(KeyCode.BACK_SPACE, 4); 
+		write("COMP");
+		clickOn("#buttonSearch");
+		sleep(500);
 
 		clickOn("#tabFilter");
 		clickOn("#buttonFilter");
@@ -57,5 +101,8 @@ public class FxTest extends ApplicationTest {
 		 * TODO:
 		 * Click on check boxes in List tab
 		 */
+	
+		clickOn("#tabTimetable");
+		sleep(1000);
 	}
 }
