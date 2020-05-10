@@ -42,7 +42,7 @@ public class FxTest extends ApplicationTest {
 		clickOn("#tabSfq");
 		clickOn("#buttonInstructorSfq");
 		Button b = (Button)s.lookup("#buttonInstructorSfq");
-		sleep(1000);
+		sleep(500);
 		assertTrue(b.isDisabled());
 		
 		clickOn("#tabMain");
@@ -53,7 +53,6 @@ public class FxTest extends ApplicationTest {
 		type(KeyCode.END); 
 		type(KeyCode.BACK_SPACE, 8); 
 		clickOn("#buttonSearch");
-		sleep(500);
 		
 		// test subject
 		clickOn("#textfieldSubject");
@@ -64,7 +63,6 @@ public class FxTest extends ApplicationTest {
 		type(KeyCode.BACK_SPACE, 4); 
 		write("comp");
 		clickOn("#buttonSearch");
-		sleep(500);
 		
 		// test term
 		clickOn("#textfieldTerm");
@@ -75,7 +73,6 @@ public class FxTest extends ApplicationTest {
 		type(KeyCode.BACK_SPACE, 4); 
 		write("191a");
 		clickOn("#buttonSearch");
-		sleep(500);
 		
 		// back to default
 		clickOn("#textfieldURL");
@@ -89,39 +86,46 @@ public class FxTest extends ApplicationTest {
 		type(KeyCode.BACK_SPACE, 4); 
 		write("COMP");
 		clickOn("#buttonSearch");
-		sleep(500);
 
-		clickOn("#tabFilter");
-		clickOn("#buttonFilter");
-		sleep(500);
-		clickOn("#buttonFilter");
-		clickOn("#checkBoxCC");
-		sleep(500);
-		clickOn("#checkBoxCC");
-		
-		// select tuesday
-		for (int i = 0;  i < 6; i++)
-			push(KeyCode.SHIFT, KeyCode.TAB); 
-		type(KeyCode.ENTER);
-
-		/**
-		 * TODO:
-		 * Click on check boxes in List tab
-		 */
-		clickOn("#tabList");
-		clickOn("#enrollCol");
-		for (int i = 0;  i < 2; i++) {
-			type(KeyCode.TAB); 
-			type(KeyCode.ENTER); 
-		}
-		type(KeyCode.TAB);
-		for (int i = 0;  i < 3; i++) {
-			type(KeyCode.TAB); 
-			type(KeyCode.ENTER); 
-		}
-		sleep(1000);
+		for (int k = 0; k < 2; k++) {
+			clickOn("#tabFilter");
+			if (k == 1) {
+				clickOn("#buttonFilter");
+				sleep(500);
+				clickOn("#buttonFilter");
+				// select tuesday
+				for (int i = 0;  i < 6; i++)
+					push(KeyCode.SHIFT, KeyCode.TAB); 
+				type(KeyCode.ENTER);
+			} else {
+				clickOn("#checkBoxCC");
+				sleep(500);
+				clickOn("#checkBoxCC");
+				// select tuesday
+				for (int i = 0;  i < 6; i++)
+					push(KeyCode.SHIFT, KeyCode.TAB); 
+				type(KeyCode.ENTER);
+			}
 	
-		clickOn("#tabTimetable");
-		sleep(2000);
+			/**
+			 * TODO:
+			 * Click on check boxes in List tab
+			 */
+			clickOn("#tabList");
+			clickOn("#enrollCol");
+			for (int j = 0;  j < 2; j++) {
+				type(KeyCode.TAB);
+				if (k == 0)
+					type(KeyCode.ENTER); 
+			}
+			type(KeyCode.TAB);
+			for (int j = 0;  j < 3; j++) {
+				type(KeyCode.TAB); 
+				type(KeyCode.ENTER); 
+			}
+		
+			clickOn("#tabTimetable");
+			sleep(1500);
+		}
 	}
 }
