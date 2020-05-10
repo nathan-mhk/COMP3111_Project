@@ -93,16 +93,35 @@ public class FxTest extends ApplicationTest {
 
 		clickOn("#tabFilter");
 		clickOn("#buttonFilter");
+		sleep(500);
 		clickOn("#buttonFilter");
 		clickOn("#checkBoxCC");
-		clickOn("#tabList");
+		sleep(500);
+		clickOn("#checkBoxCC");
+		
+		// select tuesday
+		for (int i = 0;  i < 6; i++)
+			push(KeyCode.SHIFT, KeyCode.TAB); 
+		type(KeyCode.ENTER);
 
 		/**
 		 * TODO:
 		 * Click on check boxes in List tab
 		 */
+		clickOn("#tabList");
+		clickOn("#enrollCol");
+		for (int i = 0;  i < 2; i++) {
+			type(KeyCode.TAB); 
+			type(KeyCode.ENTER); 
+		}
+		type(KeyCode.TAB);
+		for (int i = 0;  i < 3; i++) {
+			type(KeyCode.TAB); 
+			type(KeyCode.ENTER); 
+		}
+		sleep(1000);
 	
 		clickOn("#tabTimetable");
-		sleep(1000);
+		sleep(2000);
 	}
 }

@@ -87,6 +87,11 @@ public class Scraper {
 		client.getOptions().setJavaScriptEnabled(false);
 	}
 
+	/**
+	 * Validate a section (L, LA, T)
+	 * @param Code the section code
+	 * @return return true if it is valid
+	 */
 	private boolean validateSection(String Code) {
 		// validate the section
 		String CodeType = Code.replaceAll("[0-9]", "");
@@ -96,6 +101,12 @@ public class Scraper {
 			return true;
 	}
 	
+	/**
+	 * Add a section to a course
+	 * @param e HTML code
+	 * @param c the course
+	 * @return return true if it is a valid section
+	 */
 	private boolean addSection(HtmlElement e, Course c) {
 		String secFullTitle = e.getChildNodes().get(1).asText();
 		String ID = secFullTitle.substring(secFullTitle.indexOf('(') + 1, secFullTitle.indexOf(')') ); // get the ID, the number inside the (bracket)
@@ -116,6 +127,12 @@ public class Scraper {
 		return false;
 	}
 	
+	/**
+	 * Add a slot to a section
+	 * @param e HTML code
+	 * @param sec the section
+	 * @param secondRow if it is second row of time slot, e.g.: Mo 0900-1030 & Fr 1200-1330 
+	 */
 	private void addSlot(HtmlElement e, Section sec, boolean secondRow) {
 		String times[] =  e.getChildNodes().get(secondRow ? 0 : 3).asText().split("\\s+");
 		String venue = e.getChildNodes().get(secondRow ? 1 : 4).asText();
