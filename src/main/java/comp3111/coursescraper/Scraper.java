@@ -167,7 +167,8 @@ public class Scraper {
 
 	}
 	
-	private List<String> allSubCount(String baseurl, String term) {
+	
+	public List<String> allSubCount(String baseurl, String term) {
 
 		try {
 			
@@ -189,7 +190,8 @@ public class Scraper {
 		}
 		return null;
 	}
-	private List<String> scrapeSqf(String baseurl){
+	
+	public List<String> scrapeCourseSqf(String baseurl, List<Course> selected_courses){
 		try {
 			HtmlPage page = client.getPage(baseurl);
 
@@ -209,10 +211,19 @@ public class Scraper {
 						for(int j = 0; j < row_list.size(); j++) {
 							try {
 								HtmlElement row = (HtmlElement) row_list.get(j);
-								HtmlElement temp = (HtmlElement)row.getFirstByXPath(".//td[1]");
+								String first_column = ((HtmlElement)row.getFirstByXPath(".//td[1]")).getTextContent().replaceAll("\\u00A0", "");
 								//add result without the last one, because last one is Department overall or course group overall
-								if(!((HtmlElement) row.getFirstByXPath(".//td[1]")).getTextContent().replaceAll("\u00A0", "").equals("") && j+1<row_list.size()) {
-									result.add(((HtmlElement) row.getFirstByXPath(".//td[2]")).getTextContent());		
+								//first column is not null which contain course name
+								if(!first_column.replaceAll("\\s+", "").equals("") && j+1<row_list.size()) {
+									String text = ((HtmlElement) row.getFirstByXPath(".//td[2]")).getTextContent();
+									String[] score = text.split("\\[");
+									String course_score = first_column + ": " + score[0];
+							    	for(Course c: selected_courses) {
+							    		//to check match case
+							    		if(c.getTitle().split("-")[0].replaceAll("\\s+", "").equals(first_column.replaceAll("\\s+", ""))) {
+							    			result.add(course_score);
+										}
+							    	}	
 								}
 							}catch(Exception e) {
 								//System.out.println(e);
@@ -228,6 +239,126 @@ public class Scraper {
 			
 		} catch (Exception e) {
 			System.out.println(e);
+		}
+		return null;
+	}
+	public List<String> scrapeInstructorSqf(String baseurl){
+		try {
+			HtmlPage page = client.getPage(baseurl);
+
+			List<?> table_list = (List<?>) page.getByXPath("//table");
+			Vector<String> result = new Vector<String>();
+			
+			for(int i = 0; i < table_list.size(); i++) {
+				HtmlElement table = (HtmlElement) table_list.get(i);
+				//using try and catch is because some table not follow tr->th order
+				try {
+					HtmlElement header = (HtmlElement) table.getFirstByXPath(".//tbody/tr[1]/th[3]");
+					//trim()is not working, therefore use replace(). Because the strings are different with space &nbsp
+					if(header.getTextContent().replaceAll("\u00A0", "").equals("Instructor")) {
+						List<?> row_list = (List<?>) table.getByXPath(".//tbody/tr");
+						List<String[]> arr_list;
+						for(int j = 0; j < row_list.size(); j++) {
+							try {
+								HtmlElement row = (HtmlElement) row_list.get(j);
+								String third_column = ((HtmlElement)row.getFirstByXPath(".//td[3]")).getTextContent().replaceAll("\\u00A0", "");
+								
+								//add result without the last one, because last one is Department overall or course group overall
+								//first column is not null which contain course name
+								if(!third_column.replaceAll("\\s+", "").equals("") && j+1<row_list.size() && third_column.replaceAll("\\s+", "").matches("\\w+,*\\w+")) {
+									String text = ((HtmlElement) row.getFirstByXPath(".//td[5]")).getTextContent();
+									String[] score = text.split("\\[");
+									String instructor_score = third_column + ": " + score[0];
+//									String[] arr = new String[2];
+//									arr[0] = third_column.replaceAll("\\s+", "");
+//									arr[1] = score[0];
+//									arr_list.add(arr);
+									result.add(instructor_score);
+								}
+							}catch(Exception e) {
+
+							}
+						}
+//						for(String[] s: arr_list) {
+//							
+//						}
+					}
+				}catch(Exception e) {
+					System.out.println(e);
+				}
+			}
+			client.close();
+			return result;
+			
+		} catch (Exception e) {
+			System.out.println(e);
+		}
+		return null;
+	}
+	
+
+	
+	public List<Course> scrapeAll(String baseurl, String term, String sub) {
+
+		try {
+			
+			HtmlPage page = client.getPage(baseurl + "/" + term + "/subject/" + sub);
+			
+			List<?> items = (List<?>) page.getByXPath("//div[@class='course']");
+			
+			Vector<Course> result = new Vector<Course>();
+
+			// Loop all course in this list
+			for (int i = 0; i < items.size(); i++) {
+				Course c = new Course();
+				HtmlElement htmlItem = (HtmlElement) items.get(i);
+				
+				HtmlElement title = (HtmlElement) htmlItem.getFirstByXPath(".//h2");
+				c.setTitle(title.asText());
+				
+				List<?> popupdetailslist = (List<?>) htmlItem.getByXPath(".//div[@class='popupdetail']/table/tbody/tr");
+				HtmlElement exclusion = null;
+				for ( HtmlElement e : (List<HtmlElement>)popupdetailslist) {
+					HtmlElement t = (HtmlElement) e.getFirstByXPath(".//th");
+					HtmlElement d = (HtmlElement) e.getFirstByXPath(".//td");
+					
+					if (t.asText().equals("EXCLUSION")) {
+						c.setExclusion(d.asText());
+					}else if (t.asText().equals("ATTRIBUTES")) {
+						if(d.asText().contains("Common Core") && d.asText().contains("for 4Y programs")) {
+							c.setCC(true);
+						}
+					}else if (t.asText().equals("DESCRIPTION")) {
+						c.setDescription(d.asText());
+					}
+				}
+				
+				List<?> sections = (List<?>) htmlItem.getByXPath(".//tr[contains(@class,'newsect')]");
+				
+				// Loop all sections in this course
+				for ( HtmlElement e: (List<HtmlElement>)sections) {
+					
+					// if section is invalid, no need to add slot
+					if(addSection(e, c)) {
+						addSlot(e, c.getLastSection(), false);
+						
+						// check if there is second row, i.e.: Mo 1330-1500 && Fr 0900-1030, instead of TuTh 1330-1500
+						e = (HtmlElement)e.getNextSibling();
+						if (e != null && !e.getAttribute("class").contains("newsect")) {
+							addSlot(e, c.getLastSection(), true);
+						}
+					}
+				}
+				
+				
+					result.add(c);
+				
+			}
+			client.close();
+			return result;
+		} catch (Exception e) {
+			System.out.println("404 page not found: make sure the URL, term and subject are valid. ");
+			// System.out.println(e);
 		}
 		return null;
 	}
