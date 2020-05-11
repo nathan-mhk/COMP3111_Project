@@ -264,7 +264,6 @@ public class Scraper {
 								String third_column = ((HtmlElement)row.getFirstByXPath(".//td[3]")).getTextContent().replaceAll("\\u00A0", "");
 								//add result without the last one, because last one is Department overall or course group overall
 								//first column is not null which contain course name
-								System.out.println(third_column.replaceAll("\\s+", ""));
 								
 								if(!third_column.replaceAll("\\s+", "").equals("") && j+1<row_list.size() && third_column.replaceAll("\\s+", "").matches("\\w+,*\\w+")) {
 									String text = ((HtmlElement) row.getFirstByXPath(".//td[5]")).getTextContent();
