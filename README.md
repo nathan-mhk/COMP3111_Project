@@ -20,7 +20,7 @@
 > [Link to this repository](https://github.com/NathanKong214/COMP3111_Project/)  
 > [Project Description](https://course.cse.ust.hk/comp3111/Project/comp3111_project_s2020.pdf)  
 
-# [Activity 1](https://github.com/NathanKong214/COMP3111_Project/tree/master/Activity1)
+# [Activity 1](/Activity1)
 
 
 Data Model Diagram:  
@@ -29,3 +29,6 @@ Data Model Diagram:
 System Use Case Diagram:  
 ![System Use Case Diagram](/Activity1/System%20Use%20Case.png)  
 &nbsp;&nbsp;&nbsp;&nbsp;[Use Case Specification](https://github.com/NathanKong214/COMP3111_Project/tree/master/Activity1/Activity%201.pdf)  
+
+
+# [Activity 2](/Activity2)
