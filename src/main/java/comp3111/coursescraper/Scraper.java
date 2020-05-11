@@ -262,9 +262,9 @@ public class Scraper {
 							try {
 								HtmlElement row = (HtmlElement) row_list.get(j);
 								String third_column = ((HtmlElement)row.getFirstByXPath(".//td[3]")).getTextContent().replaceAll("\\u00A0", "");
+								
 								//add result without the last one, because last one is Department overall or course group overall
 								//first column is not null which contain course name
-								
 								if(!third_column.replaceAll("\\s+", "").equals("") && j+1<row_list.size() && third_column.replaceAll("\\s+", "").matches("\\w+,*\\w+")) {
 									String text = ((HtmlElement) row.getFirstByXPath(".//td[5]")).getTextContent();
 									String[] score = text.split("\\[");
@@ -276,7 +276,7 @@ public class Scraper {
 									result.add(instructor_score);
 								}
 							}catch(Exception e) {
-								//System.out.println(e);
+
 							}
 						}
 //						for(String[] s: arr_list) {
