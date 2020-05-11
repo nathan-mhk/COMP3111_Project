@@ -123,8 +123,9 @@ public class Controller {
 		LIST
 	}
 
-	private List<Course> unfilteredCourses = Collections.emptyList();
+private List<Course> unfilteredCourses = Collections.synchronizedList(new ArrayList<Course>());
 	private List<Course> filteredCourses = Collections.emptyList();
+
 	private Vector<Course> enrolledCourses = new Vector<Course>();
 	private Vector<Label> enrolledSlots = new Vector<Label>();
 
@@ -140,7 +141,9 @@ public class Controller {
 	@FXML
 	void allSubjectSearch() {
 		buttonSfqEnrollCourse.setDisable(false);
-    	
+		total_num_course = 0;
+		unfilteredCourses = Collections.synchronizedList(new ArrayList<Course>()); 
+		
     	if(firstClick) {
         	sub_list = scraper.allSubCount(textfieldURL.getText(), textfieldTerm.getText());
         	
@@ -153,7 +156,8 @@ public class Controller {
             
     		ProgressBar pb = new ProgressBar(0);
         	copyWorker = createWorker(sub_list);
-        	   
+        	
+        	
         	pb.progressProperty().unbind();
             pb.progressProperty().bind(copyWorker.progressProperty());
             pb.progressProperty().addListener(new ChangeListener<Number>(){
@@ -177,24 +181,29 @@ public class Controller {
         	pb.setMaxHeight(18.0);
         	
         	ap.getChildren().add(pb);
+        	firstClick = true;
         	
     	}
 	}
     public Task createWorker(List<String> sub_list) {
         return new Task() {
             @Override
+            
             protected Object call() throws Exception {
-           
+            	
             	for(int i = 0; i < sub_list.size(); i++) {
 
-            		List<Course> c = scraper.scrape(textfieldURL.getText(), textfieldTerm.getText(),sub_list.get(i));
+            		List<Course> c = scraper.scrapeAll(textfieldURL.getText(), textfieldTerm.getText(),sub_list.get(i));
             		total_num_course += c.size();
-
+            		unfilteredCourses.addAll(c);
             		System.out.println("SUBJECT is done");
             		Thread.sleep(200);
             		updateProgress(i+1, sub_list.size());     		
             	}
-                
+
+            	System.out.println("Done!");
+            	System.out.println(unfilteredCourses.size());
+            	
                 return true;
             }
         };
@@ -202,17 +211,35 @@ public class Controller {
 
     @FXML
     void findInstructorSfq() {
-    	buttonInstructorSfq.setDisable(true);
+    	//buttonInstructorSfq.setDisable(true);
+    	System.out.println("This is instructor sfq!");
+    	List<String> temp;
+    	temp = scraper.scrapeInstructorSqf(textfieldSfqUrl.getText());
+
+    	String result = "";
+    	for(String s: temp) {
+    		result += s + "\n";
+    	}
+    	textAreaConsole.setText(result);
     }
 
     @FXML
     void findSfqEnrollCourse() {
     	System.out.println("It works!");
-    	List<String> temp = scraper.scrapeSqf(textfieldSfqUrl.getText());
-    	for(String s: temp) {
-    		System.out.println(s);
+    	List<String> temp;
+    	
+    	if(!enrolledCourses.isEmpty()) {
+    		String result = "Enrolled course(s) SFQ:\n";
+        	temp = scraper.scrapeCourseSqf(textfieldSfqUrl.getText(), enrolledCourses);
+        	
+        	for(String s: temp) {
+        		result += s + "\n";
+        	}
+        	textAreaConsole.setText(result); 
+    	}else {
+    		textAreaConsole.setText("There is no enrollment"); 
     	}
-    		
+   
     }
     
     private boolean isMainURLValid() {
