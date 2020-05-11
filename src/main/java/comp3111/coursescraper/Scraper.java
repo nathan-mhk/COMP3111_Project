@@ -87,6 +87,11 @@ public class Scraper {
 		client.getOptions().setJavaScriptEnabled(false);
 	}
 
+	/**
+	 * Validate a section (L, LA, T)
+	 * @param Code the section code
+	 * @return return true if it is valid
+	 */
 	private boolean validateSection(String Code) {
 		// validate the section
 		String CodeType = Code.replaceAll("[0-9]", "");
@@ -96,6 +101,12 @@ public class Scraper {
 			return true;
 	}
 	
+	/**
+	 * Add a section to a course
+	 * @param e HTML code
+	 * @param c the course
+	 * @return return true if it is a valid section
+	 */
 	private boolean addSection(HtmlElement e, Course c) {
 		String secFullTitle = e.getChildNodes().get(1).asText();
 		String ID = secFullTitle.substring(secFullTitle.indexOf('(') + 1, secFullTitle.indexOf(')') ); // get the ID, the number inside the (bracket)
@@ -116,6 +127,12 @@ public class Scraper {
 		return false;
 	}
 	
+	/**
+	 * Add a slot to a section
+	 * @param e HTML code
+	 * @param sec the section
+	 * @param secondRow if it is second row of time slot, e.g.: Mo 0900-1030 & Fr 1200-1330 
+	 */
 	private void addSlot(HtmlElement e, Section sec, boolean secondRow) {
 		String times[] =  e.getChildNodes().get(secondRow ? 0 : 3).asText().split("\\s+");
 		String venue = e.getChildNodes().get(secondRow ? 1 : 4).asText();
@@ -150,6 +167,79 @@ public class Scraper {
 
 	}
 	
+	private List<String> allSubCount(String baseurl, String term) {
+
+		try {
+			
+			HtmlPage page = client.getPage(baseurl + "/" + term + "/");
+			List<?> depts = (List<?>) page.getByXPath("//div[@class='depts']/a");
+			Vector<String> result = new Vector<String>();
+			
+			for (int i =0; i < depts.size(); i++) {
+				String name = new String();
+				HtmlElement htmlItem = (HtmlElement) depts.get(i);
+				name = htmlItem.getTextContent();
+				result.add(name);
+			}
+			
+			client.close();
+			return result;
+		} catch (Exception e) {
+			System.out.println(e);
+		}
+		return null;
+	}
+	private List<String> scrapeSqf(String baseurl){
+		try {
+			HtmlPage page = client.getPage(baseurl);
+
+			List<?> table_list = (List<?>) page.getByXPath("//table");
+			Vector<String> result = new Vector<String>();
+			
+			for(int i = 0; i < table_list.size(); i++) {
+				HtmlElement table = (HtmlElement) table_list.get(i);
+				//using try and catch is because some table not follow tr->th order
+				try {
+					HtmlElement header = (HtmlElement) table.getFirstByXPath(".//tbody/tr[1]/th[1]");
+					
+					//trim()is not working, therefore use replace(). Because the strings are different with space &nbsp
+					if(header.getTextContent().replaceAll("\u00A0", "").equals("Course")) {
+						List<?> row_list = (List<?>) table.getByXPath(".//tbody/tr");
+						
+						for(int j = 0; j < row_list.size(); j++) {
+							try {
+								HtmlElement row = (HtmlElement) row_list.get(j);
+								HtmlElement temp = (HtmlElement)row.getFirstByXPath(".//td[1]");
+								//add result without the last one, because last one is Department overall or course group overall
+								if(!((HtmlElement) row.getFirstByXPath(".//td[1]")).getTextContent().replaceAll("\u00A0", "").equals("") && j+1<row_list.size()) {
+									result.add(((HtmlElement) row.getFirstByXPath(".//td[2]")).getTextContent());		
+								}
+							}catch(Exception e) {
+								//System.out.println(e);
+							}
+						}
+					}
+				}catch(Exception e) {
+					System.out.println(e);
+				}
+			}
+			client.close();
+			return result;
+			
+		} catch (Exception e) {
+			System.out.println(e);
+		}
+		return null;
+	}
+	
+	/**
+	 * This function scrape the content on web and put them in the the 
+	 * structure of courses, sections and slots
+	 * @param baseurl the domain name and the folder of the course catalog
+	 * @param term the term to scrape, e.g.: 1910
+	 * @param sub the subject to scrape, e.g.: COMP
+	 * @return a list of courses
+	 */
 	public List<Course> scrape(String baseurl, String term, String sub) {
 
 		try {
@@ -215,5 +305,6 @@ public class Scraper {
 		}
 		return null;
 	}
+	
 
 }

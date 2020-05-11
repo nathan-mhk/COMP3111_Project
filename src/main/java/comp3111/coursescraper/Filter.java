@@ -34,6 +34,14 @@ class Filter {
     private static boolean all = false;
 
     /**
+     * Get the map of filters
+     * @return The map of filters
+     */
+    public static Map<String, Boolean> getFilters() {
+        return filters;
+    }
+
+    /**
      * Toggle all checkboxes at once
      * 
      * @return The current state of all checkboxes, true == checked, false == unchecked
@@ -187,10 +195,7 @@ class Filter {
         char first = sectionCode.charAt(0);
         char second = sectionCode.charAt(1);
 
-        if ((first == 'T') || ((first == 'L') && second == 'A')) {
-            return true;
-        }
-        return false;
+        return ((first == 'T') || ((first == 'L') && second == 'A'));
     }
 
     /**
@@ -316,7 +321,7 @@ class Filter {
             
             for (Course course : unfilteredCourses) {
                 // CNF: (!A+B)(!C+D)(E)
-                if ((!filters.get(CC) || course.getCC()) && (!filters.get(NOEX) || (course.getExclusion() != null)) && filterSections(course)) {
+                if ((!filters.get(CC) || course.getCC()) && (!filters.get(NOEX) || (course.getExclusion() == null)) && filterSections(course)) {
                     filteredCourses.add(course);
                 }
             }

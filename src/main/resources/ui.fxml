@@ -66,8 +66,8 @@
                               <CheckBox layoutX="243.0" layoutY="98.0" mnemonicParsing="false" onAction="#checkFilters" text="Thursday" />
                               <CheckBox layoutX="243.0" layoutY="115.0" mnemonicParsing="false" onAction="#checkFilters" text="Friday" />
                               <CheckBox layoutX="243.0" layoutY="132.0" mnemonicParsing="false" onAction="#checkFilters" text="Saturday" />
-                              <Button layoutX="162.0" layoutY="14.0" mnemonicParsing="false" onAction="#checkFilters" text="Select All" />
-                              <CheckBox layoutX="360.0" layoutY="48.0" mnemonicParsing="false" onAction="#checkFilters" text="Common Core" />
+                              <Button fx:id="buttonFilter" layoutX="162.0" layoutY="14.0" mnemonicParsing="false" onAction="#checkFilters" text="Select All" />
+                              <CheckBox fx:id="checkBoxCC" layoutX="360.0" layoutY="48.0" mnemonicParsing="false" onAction="#checkFilters" text="Common Core" />
                               <CheckBox layoutX="360.0" layoutY="65.0" mnemonicParsing="false" onAction="#checkFilters" text="No Exclusion" />
                               <CheckBox layoutX="500.0" layoutY="48.0" mnemonicParsing="false" onAction="#checkFilters" text="With Labs or Tutorial" />
                               <Label layoutX="32.0" layoutY="278.0" prefHeight="41.0" prefWidth="642.0" text="* When the filter is applied, display all sections that fulfill all of these conditions; Print them to the console below on any change of checkbox" wrapText="true" />
@@ -155,8 +155,8 @@
                       <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
                            <children>
                               <Label layoutX="82.0" layoutY="31.0" text="SFQ URL" />
-                              <TextField fx:id="textfieldSfqUrl" layoutX="147.0" layoutY="27.0" prefHeight="25.0" prefWidth="403.0" text="http://sfq.ust.hk/results/eng-f19.html " />
-                              <Button fx:id="buttonSfqEnrollCourse" layoutX="147.0" layoutY="64.0" mnemonicParsing="false" onAction="#findSfqEnrollCourse" text="Find SFQ with my enrolled courses" />
+                              <TextField fx:id="textfieldSfqUrl" layoutX="147.0" layoutY="27.0" prefHeight="25.0" prefWidth="403.0" text="file:///Users/bobbyho/Desktop/Bobby/sfq.html" />
+                              <Button fx:id="buttonSfqEnrollCourse" layoutX="147.0" layoutY="64.0" mnemonicParsing="false" onAction="#findSfqEnrollCourse" text="Find SFQ with my enrolled courses" disable="false"/>
                               <Button fx:id="buttonInstructorSfq" layoutX="384.0" layoutY="64.0" mnemonicParsing="false" onAction="#findInstructorSfq" text="List instructors' average SFQ" />
                               <Label layoutX="42.0" layoutY="132.0" text="You may assume no login is required when you scrape the SFQ page" />
                               <Label layoutX="42.0" layoutY="176.0" prefHeight="44.0" prefWidth="601.0" text="When Find SFQ button is clicked, unadjusted SFQ data will be printed (not the data inside [] ). If a course has multiple section,s only the course average is needed." wrapText="true" />

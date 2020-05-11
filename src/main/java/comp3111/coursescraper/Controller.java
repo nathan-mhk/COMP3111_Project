@@ -1,8 +1,10 @@
 package comp3111.coursescraper;
 
 import javafx.beans.value.ObservableValue;
+import javafx.beans.value.ChangeListener;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.concurrent.Task;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.Node;
@@ -28,6 +30,8 @@ import javafx.scene.paint.Color;
 import javafx.util.Callback;
 
 import java.util.*;
+
+
 import java.time.LocalTime;
 import javafx.scene.text.Font;
 
@@ -55,7 +59,13 @@ public class Controller {
     private ComboBox<?> comboboxTimeSlot;
 
     @FXML
-    private Tab tabFilter;
+	private Tab tabFilter;
+	
+	@FXML
+	private Button buttonFilter;
+
+	@FXML
+	private CheckBox checkBoxCC;
 
     @FXML
     private Tab tabList;
@@ -113,14 +123,15 @@ public class Controller {
 		LIST
 	}
 
-	private List<Course> unfilteredCourses = Collections.emptyList();
+private List<Course> unfilteredCourses = Collections.synchronizedList(new ArrayList<Course>());
 	private List<Course> filteredCourses = Collections.emptyList();
+
 	private Vector<Course> enrolledCourses = new Vector<Course>();
 	private Vector<Label> enrolledSlots = new Vector<Label>();
 
 	private ObservableList<ListEntry> listEntries = FXCollections.observableArrayList();
     
-	private boolean firstClick = true;
+    private boolean firstClick = true;
     
     private List<String> sub_list;
     private int total_num_course = 0;
@@ -527,6 +538,7 @@ public class Controller {
 	private void fetch(boolean filtered) {
 		// scrape using scraper and set the console output
 		if (!filtered) {
+			filteredCourses = getListOfCourse();
 			setConsoleOutput(getListOfCourse(), Type.SEARCH);
 		} else {
 			filteredCourses = Filter.filterCourses(getListOfCourse());

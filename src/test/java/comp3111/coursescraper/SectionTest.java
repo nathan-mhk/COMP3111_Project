@@ -1,6 +1,6 @@
 package comp3111.coursescraper;
 
-
+import java.util.*;
 import org.junit.*;
 
 import comp3111.coursescraper.Section;
@@ -13,6 +13,8 @@ public class SectionTest {
 
 	private Section sec = new Section();
 	private Slot s = new Slot();
+
+	private List<Slot> slots = new Vector<Slot>();
 	
 	@Before
 	public void setUp() {
@@ -24,6 +26,7 @@ public class SectionTest {
 		
 		for (int k = 0; k < 5; k++)
 			sec.addSlot(s);
+			slots.add(s.clone());
 	}
 	
 	@Test
@@ -58,5 +61,48 @@ public class SectionTest {
 		assertEquals(sec.getSlot(-1), null);
 		assertEquals(sec.getSlot(2).getVenue(), "Rm 6591, Lift 31-32 (88)");
 		assertEquals(sec.getSlot(3), null);
+	}
+
+	@Test
+	public void testSlotsManipulating() {
+
+		Slot slot = slots.get(0);
+		slots.add(slot);
+
+		// setSlots()
+		sec.setSlots(slots);
+
+		// setNumSlots()
+		sec.setNumSlots(slots.size());
+		assertEquals(slots.size(), sec.getNumSlots());
+		
+		// getSlots()
+		assertEquals(slots, sec.getSlots());
+		
+		// setEnrollStatus()
+		sec.setEnrollStatus(true);
+		assertTrue(sec.isEnrolled());
+		sec.setEnrollStatus(false);
+		assertFalse(sec.isEnrolled());
+	}
+
+	@Test
+	public void testEquals() {
+		Section section = null;
+		assertFalse(sec.equals(section));
+
+		assertFalse(sec.equals(s));
+
+		section = new Section();
+		assertFalse(sec.equals(section));
+
+		section.setID(2020);
+		assertFalse(sec.equals(section));
+
+		section.setCode("L1");
+		assertFalse(sec.equals(section));
+
+		section.setInstructor("ABC");
+		assertTrue(sec.equals(section));		
 	}
 }
