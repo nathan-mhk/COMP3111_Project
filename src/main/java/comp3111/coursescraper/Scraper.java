@@ -167,7 +167,7 @@ public class Scraper {
 
 	}
 	
-	public List<String> allSubCount(String baseurl, String term) {
+	private List<String> allSubCount(String baseurl, String term) {
 
 		try {
 			
@@ -189,7 +189,7 @@ public class Scraper {
 		}
 		return null;
 	}
-	public List<String> scrapeSqf(String baseurl){
+	private List<String> scrapeSqf(String baseurl){
 		try {
 			HtmlPage page = client.getPage(baseurl);
 
@@ -305,5 +305,6 @@ public class Scraper {
 		}
 		return null;
 	}
+	
 
 }
