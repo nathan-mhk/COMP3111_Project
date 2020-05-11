@@ -2,6 +2,8 @@ package comp3111.coursescraper;
 
 import java.net.URLEncoder;
 import java.util.List;
+import java.util.HashMap;
+import java.util.Map;
 
 import com.gargoylesoftware.htmlunit.WebClient;
 import com.gargoylesoftware.htmlunit.html.DomNode;
@@ -242,12 +244,14 @@ public class Scraper {
 		}
 		return null;
 	}
+	
 	public List<String> scrapeInstructorSqf(String baseurl){
 		try {
 			HtmlPage page = client.getPage(baseurl);
 
 			List<?> table_list = (List<?>) page.getByXPath("//table");
 			Vector<String> result = new Vector<String>();
+			HashMap<String, Float> hm = new HashMap<String, Float>();
 			
 			for(int i = 0; i < table_list.size(); i++) {
 				HtmlElement table = (HtmlElement) table_list.get(i);
@@ -262,26 +266,35 @@ public class Scraper {
 							try {
 								HtmlElement row = (HtmlElement) row_list.get(j);
 								String third_column = ((HtmlElement)row.getFirstByXPath(".//td[3]")).getTextContent().replaceAll("\\u00A0", "");
-								
+								String name_with_no_space = third_column.replaceAll("\\s+", "");
 								//add result without the last one, because last one is Department overall or course group overall
 								//first column is not null which contain course name
-								if(!third_column.replaceAll("\\s+", "").equals("") && j+1<row_list.size() && third_column.replaceAll("\\s+", "").matches("\\w+,*\\w+")) {
+								if(!third_column.replaceAll("\\s+", "").equals("") && j+1<row_list.size() && name_with_no_space.matches("\\w+,*\\w+")) {
 									String text = ((HtmlElement) row.getFirstByXPath(".//td[5]")).getTextContent();
-									String[] score = text.split("\\[");
-									String instructor_score = third_column + ": " + score[0];
-//									String[] arr = new String[2];
-//									arr[0] = third_column.replaceAll("\\s+", "");
-//									arr[1] = score[0];
-//									arr_list.add(arr);
-									result.add(instructor_score);
+									String[] score = text.split("\\(");
+									//String instructor_score = third_column + ": " + score[0];
+									
+									if(hm.containsKey(name_with_no_space)) {
+										Float old_score = hm.get(name_with_no_space);
+										Float new_score = Float.parseFloat(score[0]) + old_score;
+										hm.replace(name_with_no_space, new_score);
+										
+									}else {
+										hm.put(name_with_no_space, Float.parseFloat(score[0]));
+									}
+									
 								}
 							}catch(Exception e) {
 
 							}
 						}
-//						for(String[] s: arr_list) {
-//							
-//						}
+				        for (Map.Entry<String, Float> me : hm.entrySet()) {
+				           
+				            String instructor_score = me.getKey() + ": " + me.getValue();
+							result.add(instructor_score);
+				        }
+						
+
 					}
 				}catch(Exception e) {
 					System.out.println(e);
