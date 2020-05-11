@@ -120,19 +120,115 @@ public class Controller {
 
 	private ObservableList<ListEntry> listEntries = FXCollections.observableArrayList();
     
-    @FXML
-    void allSubjectSearch() {
-    	
+	private boolean firstClick = true;
+    
+    private List<String> sub_list;
+    private int total_num_course = 0;
+    
+    Task copyWorker;
+    
+	@FXML
+	void allSubjectSearch() {
+		buttonSfqEnrollCourse.setDisable(false);
+		total_num_course = 0;
+		unfilteredCourses = Collections.synchronizedList(new ArrayList<Course>()); 
+		
+    	if(firstClick) {
+        	sub_list = scraper.allSubCount(textfieldURL.getText(), textfieldTerm.getText());
+        	
+        	textAreaConsole.setText("Total Number of Categories/Code Prefix: " + sub_list.size());
+        	
+        	firstClick = false;
+    	}else {
+
+            AnchorPane ap = (AnchorPane)tabAllSubject.getContent();
+            
+    		ProgressBar pb = new ProgressBar(0);
+        	copyWorker = createWorker(sub_list);
+        	
+        	
+        	pb.progressProperty().unbind();
+            pb.progressProperty().bind(copyWorker.progressProperty());
+            pb.progressProperty().addListener(new ChangeListener<Number>(){
+                @Override
+                public void changed(ObservableValue<? extends Number> ov, Number t, Number t1) {
+                    if(t1.doubleValue()==1){
+                    	textAreaConsole.setText("Total Number of Courses fetched: " + total_num_course);
+                    }else {
+                    	textAreaConsole.setText("In Progress");
+                    }
+                }
+            });
+
+            new Thread(copyWorker).start();   
+       
+        	pb.setLayoutX(316.0);
+        	pb.setLayoutY(33.0);
+        	pb.setMinWidth(264.0);
+        	pb.setMaxWidth(264.0);
+        	pb.setMinHeight(18.0);
+        	pb.setMaxHeight(18.0);
+        	
+        	ap.getChildren().add(pb);
+        	firstClick = true;
+        	
+    	}
+	}
+    public Task createWorker(List<String> sub_list) {
+        return new Task() {
+            @Override
+            
+            protected Object call() throws Exception {
+            	
+            	for(int i = 0; i < sub_list.size(); i++) {
+
+            		List<Course> c = scraper.scrapeAll(textfieldURL.getText(), textfieldTerm.getText(),sub_list.get(i));
+            		total_num_course += c.size();
+            		unfilteredCourses.addAll(c);
+            		System.out.println("SUBJECT is done");
+            		Thread.sleep(200);
+            		updateProgress(i+1, sub_list.size());     		
+            	}
+
+            	System.out.println("Done!");
+            	System.out.println(unfilteredCourses.size());
+            	
+                return true;
+            }
+        };
     }
 
     @FXML
     void findInstructorSfq() {
-    	buttonInstructorSfq.setDisable(true);
+    	//buttonInstructorSfq.setDisable(true);
+    	System.out.println("This is instructor sfq!");
+    	List<String> temp;
+    	temp = scraper.scrapeInstructorSqf(textfieldSfqUrl.getText());
+
+    	String result = "";
+    	for(String s: temp) {
+    		result += s + "\n";
+    	}
+    	textAreaConsole.setText(result);
     }
 
     @FXML
     void findSfqEnrollCourse() {
-
+    	System.out.println("It works!");
+    	List<String> temp;
+    	
+    	if(!enrolledCourses.isEmpty()) {
+    		String result = "Enrolled course(s) SFQ:\n";
+        	temp = scraper.scrapeCourseSqf(textfieldSfqUrl.getText(), enrolledCourses);
+        	
+        	for(String s: temp) {
+        		result += s + "\n";
+        	}
+        	textAreaConsole.setText(result); 
+    	}else {
+    		textAreaConsole.setText("There is no enrollment"); 
+    	}
+   
     }
     
     private boolean isMainURLValid() {
