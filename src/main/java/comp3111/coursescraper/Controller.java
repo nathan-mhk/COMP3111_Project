@@ -123,7 +123,7 @@ public class Controller {
 		LIST
 	}
 
-private List<Course> unfilteredCourses = Collections.synchronizedList(new ArrayList<Course>());
+	private List<Course> unfilteredCourses = Collections.synchronizedList(new ArrayList<Course>());
 	private List<Course> filteredCourses = Collections.emptyList();
 
 	private Vector<Course> enrolledCourses = new Vector<Course>();
