@@ -17,6 +17,8 @@ public class Course {
 	private String exclusion;
 	private List<Section> sections;
 	private int numSections;
+	private Slot[] slots;
+	private int numSlots;
 	private boolean isCommonCore;
 	
 	/**
@@ -31,7 +33,11 @@ public class Course {
 		numSections = 0;
 		isCommonCore = false;
 	}
-
+	public void addSlot(Slot s) {
+		if (numSlots >= DEFAULT_MAX_SLOT)
+			return;
+		slots[numSlots++] = s.clone();
+	}
 	/**
 	 * This function duplicates a Course object
 	 * @return This return the cloned Course
