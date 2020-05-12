@@ -23,9 +23,9 @@ Task 4:
 ![Task 4 Timetable](/Activity2/Screenshots/Task4-3.png)    
   
 Task 5:  
-![Task 5](/Activity2/Screenshots/Task5-1.png)  
 ![Task 5 Show total number of categories after first click](/Activity2/Screenshots/Task5-2.png)  
-![Task 5 Updating progress bar after the second click](/Activity2/Screenshots/Task5-3.png)  
+![Task 5 Updating progress bar after the second click](/Activity2/Screenshots/Task5-3.png) 
+![Task 5 System console showing "SUBJECT is done" after 1 subject is scrapped](/Activity2/Screenshots/Task5-1.png)  
 ![Task 5 Show total number of course scrapped](/Activity2/Screenshots/Task5-4.png)
 
 
