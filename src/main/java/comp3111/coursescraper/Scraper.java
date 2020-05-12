@@ -245,7 +245,7 @@ public class Scraper {
 						}
 					}
 				}catch(Exception e) {
-					System.out.println(e);
+					//System.out.println(e);
 				}
 			}
 			client.close();
@@ -289,7 +289,6 @@ public class Scraper {
 								if(!third_column.replaceAll("\\s+", "").equals("") && j+1<row_list.size() && name_with_no_space.matches("\\w+,*\\w+")) {
 									String text = ((HtmlElement) row.getFirstByXPath(".//td[5]")).getTextContent();
 									String[] score = text.split("\\(");
-									//String instructor_score = third_column + ": " + score[0];
 									
 									if(total_score.containsKey(name_with_no_space)) {
 										Float old_score = total_score.get(name_with_no_space);
@@ -321,7 +320,7 @@ public class Scraper {
 
 					}
 				}catch(Exception e) {
-					System.out.println(e);
+					//System.out.println(e);
 				}
 			}
 			client.close();
