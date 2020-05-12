@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.HashMap;
 import java.util.Map;
 
+
 import com.gargoylesoftware.htmlunit.WebClient;
 import com.gargoylesoftware.htmlunit.html.DomNode;
 import com.gargoylesoftware.htmlunit.html.DomNodeList;
@@ -251,7 +252,8 @@ public class Scraper {
 
 			List<?> table_list = (List<?>) page.getByXPath("//table");
 			Vector<String> result = new Vector<String>();
-			HashMap<String, Float> hm = new HashMap<String, Float>();
+			HashMap<String, Float> total_score = new HashMap<String, Float>();
+			HashMap<String, Integer> section_num = new HashMap<String, Integer>();
 			
 			for(int i = 0; i < table_list.size(); i++) {
 				HtmlElement table = (HtmlElement) table_list.get(i);
@@ -274,13 +276,17 @@ public class Scraper {
 									String[] score = text.split("\\(");
 									//String instructor_score = third_column + ": " + score[0];
 									
-									if(hm.containsKey(name_with_no_space)) {
-										Float old_score = hm.get(name_with_no_space);
+									if(total_score.containsKey(name_with_no_space)) {
+										Float old_score = total_score.get(name_with_no_space);
 										Float new_score = Float.parseFloat(score[0]) + old_score;
-										hm.replace(name_with_no_space, new_score);
+										Integer old_section_num = section_num.get(name_with_no_space);
+										Integer new_section_num = old_section_num + 1;
+										total_score.replace(name_with_no_space, new_score);
+										section_num.replace(name_with_no_space, new_section_num);
 										
 									}else {
-										hm.put(name_with_no_space, Float.parseFloat(score[0]));
+										total_score.put(name_with_no_space, Float.parseFloat(score[0]));
+										section_num.put(name_with_no_space, 1);
 									}
 									
 								}
@@ -288,9 +294,12 @@ public class Scraper {
 
 							}
 						}
-				        for (Map.Entry<String, Float> me : hm.entrySet()) {
+				        for (Map.Entry<String, Float> me : total_score.entrySet()) {
 				           
-				            String instructor_score = me.getKey() + ": " + me.getValue();
+				        	Integer instructor_section_num = section_num.get(me.getKey());
+				        	Float instructor_avg_score = me.getValue()/instructor_section_num;
+				            String instructor_score = me.getKey() + ": " + instructor_avg_score;
+				          
 							result.add(instructor_score);
 				        }
 						

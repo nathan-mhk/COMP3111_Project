@@ -552,6 +552,7 @@ public class Controller {
 	 */
     @FXML
     void search() {
+    	buttonSfqEnrollCourse.setDisable(false);
 		// Reset the unfiltered and filtered course
 		unfilteredCourses.clear();
 		filteredCourses.clear();
