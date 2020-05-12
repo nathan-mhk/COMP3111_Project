@@ -209,10 +209,6 @@ public class Controller {
             		Thread.sleep(200);
             		updateProgress(i+1, sub_list.size());     		
             	}
-
-            	System.out.println("Done!");
-            	System.out.println(unfilteredCourses.size());
-            	
                 return true;
             }
         };
