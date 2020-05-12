@@ -170,7 +170,12 @@ public class Scraper {
 
 	}
 	
-	
+	/**
+	 * Count how many course prefix in that term on the web 
+	 * @param baseurl is the domain name and the folder of the course catalog
+	 * @param term is the term to scrape, e.g.: 1910
+	 * @return a list of string of course prefix e.g. COMP
+	 */
 	public List<String> allSubCount(String baseurl, String term) {
 
 		try {
@@ -194,7 +199,13 @@ public class Scraper {
 		return null;
 	}
 	
-	public List<String> scrapeCourseSqf(String baseurl, List<Course> selected_courses){
+	/**
+	 * Scrap the courses sfq data based on enrolled course
+	 * @param baseurl is the domain name and the folder of the course catalog
+	 * @param selected_courses is the list of enrolled courses
+	 * @return a list of string of courses sfq
+	 */
+	public List<String> scrapeCourseSfq(String baseurl, List<Course> selected_courses){
 		try {
 			HtmlPage page = client.getPage(baseurl);
 
@@ -234,7 +245,7 @@ public class Scraper {
 						}
 					}
 				}catch(Exception e) {
-					System.out.println(e);
+					//System.out.println(e);
 				}
 			}
 			client.close();
@@ -245,8 +256,12 @@ public class Scraper {
 		}
 		return null;
 	}
-	
-	public List<String> scrapeInstructorSqf(String baseurl){
+	/**
+	 * Scrap all the instructor sfq and divided by the number of course they teached
+	 * @param baseurl is the domain name and the folder of the course catalog
+	 * @return a list of string of instructors sqf
+	 */
+	public List<String> scrapeInstructorSfq(String baseurl){
 		try {
 			HtmlPage page = client.getPage(baseurl);
 
@@ -274,7 +289,6 @@ public class Scraper {
 								if(!third_column.replaceAll("\\s+", "").equals("") && j+1<row_list.size() && name_with_no_space.matches("\\w+,*\\w+")) {
 									String text = ((HtmlElement) row.getFirstByXPath(".//td[5]")).getTextContent();
 									String[] score = text.split("\\(");
-									//String instructor_score = third_column + ": " + score[0];
 									
 									if(total_score.containsKey(name_with_no_space)) {
 										Float old_score = total_score.get(name_with_no_space);
@@ -306,7 +320,7 @@ public class Scraper {
 
 					}
 				}catch(Exception e) {
-					System.out.println(e);
+					//System.out.println(e);
 				}
 			}
 			client.close();
@@ -318,8 +332,14 @@ public class Scraper {
 		return null;
 	}
 	
-
-	
+	/**
+	 * Scrap all the courses in one subject and put them in the the 
+	 * structure of courses, sections and slots
+	 * @param baseurl is the domain name and the folder of the course catalog
+	 * @param term is the term of the year e.g. 1910
+	 * @param sub is the short term of the subject e.g. COMP
+	 * @return a list of the courses 
+	 */
 	public List<Course> scrapeAll(String baseurl, String term, String sub) {
 
 		try {
@@ -372,8 +392,7 @@ public class Scraper {
 					}
 				}
 				
-				
-					result.add(c);
+				result.add(c);
 				
 			}
 			client.close();
