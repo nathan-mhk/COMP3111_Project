@@ -5,10 +5,16 @@ Task 1:
 ![Task 1 Search](/Activity2/Screenshots/Task1-2.png)    
     
 Task 2:  
-![Task 2](/Activity2/Screenshots/)  
+![Task 2 Filters in course and section](/Activity2/Screenshots/Task2-1.png)  
+![Task 2 Filters in course section and slot](/Activity2/Screenshots/Task2-2.png)  
+![Task 2 Multiple days](/Activity2/Screenshots/Task2-3.png)  
+![Task 2 AM & PM](/Activity2/Screenshots/Task2-4.png)  
   
 Task 3:  
-![Task 3](/Activity2/Screenshots/)  
+![Task 3 Enroll courses from filter result](/Activity2/Screenshots/Task3-1.png)  
+![Task 3 Display enrolled courses even with a new filter result](/Activity2/Screenshots/Task3-2.png)  
+![Task 3 Display enrolled courses even with a new course result](/Activity2/Screenshots/Task3-3.png)  
+![Task 3 Enroll courses from different subjects](/Activity2/Screenshots/Task3-4.png)  
   
 Task 4:  
 ![Task 4 Timetable](/Activity2/Screenshots/Task4.png)  
