@@ -20,7 +20,12 @@ Task 4:
 ![Task 4 Timetable](/Activity2/Screenshots/Task4.png)  
   
 Task 5:  
-![Task 5](/Activity2/Screenshots/)  
+![Task 5 Show total number of categories after first click](/Activity2/Screenshots/Task5-2.png)  
+![Task 5 Updating progress bar after the second click](/Activity2/Screenshots/Task5-3.png)  
+![Task 5 Show total number of course scrapped](/Activity2/Screenshots/Task5-4.png)
+
 
 Task 6:  
-![Task 6](/Activity2/Screenshots/)      
+![Task 6 "Find SFQ" button is disable since no search button is clicked](/Activity2/Screenshots/Task6-1.png)  
+![Task 6 Show all instructors' average SFQ](/Activity2/Screenshots/Task6-2.png)  
+![Task 6 Show all enrolled courses' SFQ](/Activity2/Screenshots/Task6-3.png)  
