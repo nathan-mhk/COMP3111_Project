@@ -2,7 +2,8 @@
 
 Task 1:  
 ![Task 1 Handle 404 Error](/Activity2/Screenshots/Task1-1.png)  
-![Task 1 Search](/Activity2/Screenshots/Task1-2.png)    
+![Task 1 Search](/Activity2/Screenshots/Task1-2.png)
+![Task 1 Search](/Activity2/Screenshots/Task1-3.png)       
     
 Task 2:  
 ![Task 2 Filters in course and section](/Activity2/Screenshots/Task2-1.png)  
@@ -17,10 +18,17 @@ Task 3:
 ![Task 3 Enroll courses from different subjects](/Activity2/Screenshots/Task3-4.png)  
   
 Task 4:  
-![Task 4 Timetable](/Activity2/Screenshots/Task4.png)  
+![Task 4 Timetable](/Activity2/Screenshots/Task4-1.png)
+![Task 4 Timetable](/Activity2/Screenshots/Task4-2.png)  
+![Task 4 Timetable](/Activity2/Screenshots/Task4-3.png)    
   
 Task 5:  
-![Task 5](/Activity2/Screenshots/)  
+![Task 5](/Activity2/Screenshots/Task5-1.png)  
+![Task 5](/Activity2/Screenshots/Task5-2.png)  
+![Task 5](/Activity2/Screenshots/Task5-3.png)  
+![Task 5](/Activity2/Screenshots/Task5-4.png)  
 
 Task 6:  
-![Task 6](/Activity2/Screenshots/)      
+![Task 6](/Activity2/Screenshots/Task6-1.png)  
+![Task 6](/Activity2/Screenshots/Task6-2.png)  
+![Task 6](/Activity2/Screenshots/Task6-3.png)  
