@@ -134,10 +134,15 @@ public class Controller {
     private boolean firstClick = true;
     
     private List<String> sub_list;
-    private int total_num_course = 0;
-    
+    private int total_num_course = 0;  
     Task copyWorker;
     
+	/**
+	 * In the first click, show total number of categories in that term
+	 * After the first click, scrap all the course data in that term and put into the structure of course, section, slot
+	 * Also update the progress bar during the scraping process
+	 * Show the total number of scrapped course in console after searching
+	 */
 	@FXML
 	void allSubjectSearch() {
 		buttonSfqEnrollCourse.setDisable(false);
@@ -146,7 +151,6 @@ public class Controller {
 		
     	if(firstClick) {
         	sub_list = scraper.allSubCount(textfieldURL.getText(), textfieldTerm.getText());
-        	
         	textAreaConsole.setText("Total Number of Categories/Code Prefix: " + sub_list.size());
         	
         	firstClick = false;
@@ -185,6 +189,11 @@ public class Controller {
         	
     	}
 	}
+	/**
+	 * After all the courses in one subject is scrapped, update the system console and progress bar during the run time
+	 * @param sub_list is the list of string contain all the code prefix
+	 * @return Task
+	 */
     public Task createWorker(List<String> sub_list) {
         return new Task() {
             @Override
@@ -208,29 +217,37 @@ public class Controller {
             }
         };
     }
-
+    
+    /**
+     * Search for all instructor sfq
+     * And show it on the console 
+     */
     @FXML
     void findInstructorSfq() {
-    	//buttonInstructorSfq.setDisable(true);
-    	System.out.println("This is instructor sfq!");
-    	List<String> temp;
-    	temp = scraper.scrapeInstructorSqf(textfieldSfqUrl.getText());
 
-    	String result = "";
+    	List<String> temp;
+    	temp = scraper.scrapeInstructorSfq(textfieldSfqUrl.getText());
+
+    	String result = "List instructors' average SFQ: \n\n";
     	for(String s: temp) {
     		result += s + "\n";
     	}
     	textAreaConsole.setText(result);
     }
 
+    
+    /**
+     * Check is enrolledCourses empty, if not search for all enrolled courses sfq and show it on the console 
+     * Otherwise, will reject the command and show "There is no enrollment"
+     */
+    
     @FXML
     void findSfqEnrollCourse() {
-    	System.out.println("It works!");
     	List<String> temp;
     	
     	if(!enrolledCourses.isEmpty()) {
-    		String result = "Enrolled course(s) SFQ:\n";
-        	temp = scraper.scrapeCourseSqf(textfieldSfqUrl.getText(), enrolledCourses);
+    		String result = "Enrolled course(s) SFQ:\n\n";
+        	temp = scraper.scrapeCourseSfq(textfieldSfqUrl.getText(), enrolledCourses);
         	
         	for(String s: temp) {
         		result += s + "\n";
